@@ -91,16 +91,18 @@ Include:
 - The **actual** line (based on real `closedAt` data)
 - If the sprint is still running, include a **forecast** annotation in the summary text (add a sentence explaining the projected finish date)
 
-```mermaid
+Replace all `{placeholders}` with actual computed values before rendering. Ensure every date in the x-axis corresponds to a value in both line arrays (use `null` for future actual values so the line stops at today).
+
+Render the diagram by calling the renderMermaidDiagram tool with the Mermaid markup directly — do NOT output a fenced code block. Pass only the raw diagram markup (without ```mermaid wrapper) as the markup parameter, and a short descriptive title as the title parameter.
+
+Example markup to pass (with placeholders filled in):
+
 xychart-beta
     title "Sprint Burndown — {CURRENT_SPRINT_MILESTONE}"
     x-axis [{comma-separated list of dates from SPRINT_START_DATE to SPRINT_END_DATE}]
     y-axis "Issues Remaining" 0 --> {TOTAL_ISSUES_AT_SPRINT_START}
     line "Ideal"  [{comma-separated ideal remaining values}]
     line "Actual" [{comma-separated actual remaining values, use null for future dates}]
-```
-
-Replace all `{placeholders}` with actual computed values before rendering. Ensure every date in the x-axis corresponds to a value in both line arrays (use `null` for future actual values so the line stops at today).
 
 ---
 

@@ -102,7 +102,12 @@ Remaining open issues in scope: **{count}**
 
 Generate a Mermaid Gantt diagram showing the three completion scenarios. Use today as the start date and the three estimated completion dates as end dates.
 
-```mermaid
+Replace `{today}`, `{optimistic_end_date}`, `{realistic_end_date}`, and `{pessimistic_end_date}` with the actual computed dates in `YYYY-MM-DD` format.
+
+Render the diagram by calling the renderMermaidDiagram tool with the Mermaid markup directly — do NOT output a fenced code block. Pass only the raw diagram markup (without ```mermaid wrapper) as the markup parameter, and a short descriptive title as the title parameter.
+
+Example markup to pass (with placeholders filled in):
+
 gantt
     title Delivery Forecast — {milestone name}
     dateFormat  YYYY-MM-DD
@@ -112,9 +117,6 @@ gantt
     Optimistic  (75th pct.)  : opt,  {today}, {optimistic_end_date}
     Realistic   (median)     : real, {today}, {realistic_end_date}
     Pessimistic (25th pct.)  : pess, {today}, {pessimistic_end_date}
-```
-
-Replace `{today}`, `{optimistic_end_date}`, `{realistic_end_date}`, and `{pessimistic_end_date}` with the actual computed dates in `YYYY-MM-DD` format before rendering.
 
 ---
 
