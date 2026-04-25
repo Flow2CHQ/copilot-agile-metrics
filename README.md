@@ -20,55 +20,42 @@
 
 ---
 
-## Available Prompts
+## 🚀 Getting Started — Run the Setup Wizard
 
-### 🚀 Start here
+The recommended first step is the **one-time setup wizard**. It asks about your project structure once and generates personalised, pre-configured versions of all five analysis prompts — ready to use with no further configuration.
 
-| Prompt | Install | Description |
-|--------|---------|-------------|
-| [setup.agent.md](prompts/setup.agent.md) | [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Achat-agent%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2FFlow2CHQ%2Fcopilot-agile-metrics%2Fmain%2Fprompts%2Fsetup.agent.md) [![Download](https://img.shields.io/badge/Raw-download-grey?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/setup.agent.md) | **One-time setup wizard.** Asks about your project structure once, then generates personalised, pre-configured versions of all five analysis prompts in `.github/prompts/`. **VS Code only** — requires Agent mode to write files. |
+| | |
+|---|---|
+| **Install in VS Code** | [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Achat-agent%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2FFlow2CHQ%2Fcopilot-agile-metrics%2Fmain%2Fprompts%2Fsetup.agent.md) |
+| **Or download manually** | [![Download](https://img.shields.io/badge/Raw-download-grey?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/setup.agent.md) → place in `.github/prompts/` of your project |
 
-> **After installing:** Open Copilot Chat (`⌃⌘I` / `Ctrl+Alt+I`), click the **Agent ∨** dropdown at the bottom of the chat panel, select **Setup — Generate Configured Prompts**, then send any message (e.g. `start`) to begin the wizard.
+**After installing:**
+1. Open your project in VS Code and open Copilot Chat (`⌃⌘I` / `Ctrl+Alt+I`)
+2. Click the **Agent ∨** dropdown at the bottom of the chat panel and select **Agent** mode
+3. Select the prompt **"Setup — Generate Configured Prompts"** from the picker
+4. Send any message (e.g. `start`) — the wizard will ask you 10 short questions and generate your personalised prompts
 
-### Analysis prompts (generic — ask setup questions each time)
-
-| Prompt | Install | Description |
-|--------|---------|-------------|
-| [sprint-analysis.prompt.md](prompts/sprint-analysis.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/sprint-analysis.prompt.md) | Analyse the current sprint — open issues, at-risk items, blockers, workload by assignee |
-| [retro-input.prompt.md](prompts/retro-input.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/retro-input.prompt.md) | Generate retrospective input from the last sprint — label patterns, discussion load, communication gaps |
-| [monte-carlo-forecast.prompt.md](prompts/monte-carlo-forecast.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/monte-carlo-forecast.prompt.md) | Throughput-based probabilistic forecast — when will the remaining issues be done? *(Note: uses throughput percentiles, not a full Monte Carlo simulation)* |
-| [burndown-chart.prompt.md](prompts/burndown-chart.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/burndown-chart.prompt.md) | Mermaid burndown chart for the current sprint based on issue close dates |
-| [stakeholder-update.prompt.md](prompts/stakeholder-update.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/stakeholder-update.prompt.md) | Management-ready sprint update: executive summary + risk table, generated in seconds |
-
-> **Tip:** Run the setup wizard once to generate pre-configured versions of all five prompts in `.github/prompts/`. Those versions skip all setup questions and go straight to the analysis.
+> **VS Code only.** The setup wizard writes files to your project, which requires Agent mode. It does not work in the GitHub Web UI.
 
 ---
 
-## How to Use
+## Available Analysis Prompts
 
-### VS Code Copilot Chat
+After running the setup wizard, use these prompts by typing `/` in the Copilot Chat prompt picker — e.g. `/sprint-analysis`. The generated versions in `.github/prompts/` are pre-configured for your project and require no further input.
 
-1. Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) and [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) extensions.
-2. Download individual `.prompt.md` / `.agent.md` files (use the **Raw download** or **Install** badges above) and place them in your project's `.github/prompts/` folder — VS Code picks them up automatically in the prompt picker.
-   > **Note:** The prompts in *this* repository live in `prompts/` for browsing convenience. Copy them to `.github/prompts/` in *your own* project.
-3. Open Copilot Chat (`⌃⌘I` / `Ctrl+Alt+I`) and switch to **Agent mode** (dropdown next to the send button). Agent mode gives Copilot automatic access to your GitHub repository data — no extra steps needed.
-4. Select a prompt from the picker (or attach the file via the paperclip icon) and send it.
-5. Copilot will ask you a few short questions first (e.g. how sprints are tracked, which sprint to analyse). Answer them in plain text.
+The **Raw** links let you download the generic (unconfigured) version of each prompt — useful if you want to copy it directly into your own `.github/prompts/` file and customise it by hand, or if you want to use a prompt without running the setup wizard first.
 
-> **Ask mode fallback:** If you prefer Ask mode, type `@github` at the start of the chat before selecting a prompt — this gives Copilot access to your repository data.
+| Prompt (after setup) | Raw | Description |
+|----------------------------|-----|-------------|
+| [/sprint-analysis](prompts/sprint-analysis.prompt.md) | [![Raw](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/sprint-analysis.prompt.md) | Analyse the current sprint — open issues, at-risk items, blockers, workload by assignee |
+| [/retro-input](prompts/retro-input.prompt.md) | [![Raw](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/retro-input.prompt.md) | Generate retrospective input from the last sprint — label patterns, discussion load, communication gaps |
+| [/monte-carlo-forecast](prompts/monte-carlo-forecast.prompt.md) | [![Raw](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/monte-carlo-forecast.prompt.md) | Throughput-based probabilistic forecast — when will the remaining issues be done? *(Note: uses throughput percentiles, not a full Monte Carlo simulation)* |
+| [/burndown-chart](prompts/burndown-chart.prompt.md) | [![Raw](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/burndown-chart.prompt.md) | Mermaid burndown chart for the current sprint based on issue close dates |
+| [/stakeholder-update](prompts/stakeholder-update.prompt.md) | [![Raw](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/stakeholder-update.prompt.md) | Management-ready sprint update: executive summary + risk table, generated in seconds |
+
+> **Using the GitHub Web UI instead?** Open any `.prompt.md` file in this repository on github.com and click the **Copilot icon** in the file toolbar ("Open in Copilot"). The five analysis prompts work in both VS Code and the GitHub Web UI. The setup wizard only works in VS Code Agent mode.
 >
-> Copy-paste template: `@github` *(then attach or invoke the prompt from the picker)*
-
-### GitHub Web UI
-
-1. Navigate to your repository on github.com.
-2. Open any of the five analysis `.prompt.md` files.
-3. Click **"Open in Copilot"** (the Copilot icon in the file toolbar) — available in repositories where GitHub Copilot is enabled.
-4. Copilot will ask you a few short questions in the chat before running the analysis. Answer them in plain text.
-
-> **Limitation:** The **setup wizard** (`setup.agent.md`) generates files and therefore only works in VS Code Agent mode — not in the GitHub Web UI. The five analysis prompts work in both environments.
->
-> **Tip:** No file editing needed. All analysis prompts ask for parameters interactively.
+> **Ask mode fallback:** If Copilot doesn't have access to your repository data, type `@github` at the start of your message before invoking the prompt.
 
 ---
 
