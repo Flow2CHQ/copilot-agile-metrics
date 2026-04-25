@@ -2,8 +2,8 @@
 
 > Reusable GitHub Copilot prompt files for analysing GitHub Projects — works out-of-the-box in **VS Code Copilot Chat** and the **GitHub Web UI**.
 
-[![Awesome Copilot](https://img.shields.io/badge/awesome--copilot-prompts-blue?style=flat-square)](https://github.com/github/awesome-copilot)
-[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-green?style=flat-square)](LICENSE)
+[![Awesome Copilot](https://img.shields.io/badge/awesome--copilot-prompts-blue?style=for-the-badge)](https://github.com/github/awesome-copilot)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-green?style=for-the-badge)](LICENSE)
 
 ---
 
@@ -13,17 +13,17 @@
 
 | Prompt | Install | Description |
 |--------|---------|-------------|
-| [setup.agent.md](prompts/setup.agent.md) | [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Achat-agent%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2FFlow2CHQ%2Fcopilot-agile-metrics%2Fmain%2Fprompts%2Fsetup.agent.md) [![Download](https://img.shields.io/badge/Raw-download-grey?style=flat-square&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/setup.agent.md) | **One-time setup wizard.** Asks about your project structure once, then generates personalised, pre-configured versions of all five analysis prompts in `prompts/configured/`. **VS Code only** — requires Agent mode to write files. |
+| [setup.agent.md](prompts/setup.agent.md) | [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Achat-agent%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2FFlow2CHQ%2Fcopilot-agile-metrics%2Fmain%2Fprompts%2Fsetup.agent.md) [![Download](https://img.shields.io/badge/Raw-download-grey?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/setup.agent.md) | **One-time setup wizard.** Asks about your project structure once, then generates personalised, pre-configured versions of all five analysis prompts in `prompts/configured/`. **VS Code only** — requires Agent mode to write files. |
 
 ### Analysis prompts (generic — ask setup questions each time)
 
 | Prompt | Install | Description |
 |--------|---------|-------------|
-| [sprint-analysis.prompt.md](prompts/sprint-analysis.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=flat-square&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/sprint-analysis.prompt.md) | Analyse the current sprint — open issues, at-risk items, blockers, workload by assignee |
-| [retro-input.prompt.md](prompts/retro-input.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=flat-square&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/retro-input.prompt.md) | Generate retrospective input from the last sprint — label patterns, discussion load, communication gaps |
-| [monte-carlo-forecast.prompt.md](prompts/monte-carlo-forecast.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=flat-square&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/monte-carlo-forecast.prompt.md) | Throughput-based probabilistic forecast — when will the remaining issues be done? |
-| [burndown-chart.prompt.md](prompts/burndown-chart.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=flat-square&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/burndown-chart.prompt.md) | Mermaid burndown chart for the current sprint based on issue close dates |
-| [stakeholder-update.prompt.md](prompts/stakeholder-update.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=flat-square&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/stakeholder-update.prompt.md) | Management-ready sprint update: executive summary + risk table, generated in seconds |
+| [sprint-analysis.prompt.md](prompts/sprint-analysis.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/sprint-analysis.prompt.md) | Analyse the current sprint — open issues, at-risk items, blockers, workload by assignee |
+| [retro-input.prompt.md](prompts/retro-input.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/retro-input.prompt.md) | Generate retrospective input from the last sprint — label patterns, discussion load, communication gaps |
+| [monte-carlo-forecast.prompt.md](prompts/monte-carlo-forecast.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/monte-carlo-forecast.prompt.md) | Throughput-based probabilistic forecast — when will the remaining issues be done? |
+| [burndown-chart.prompt.md](prompts/burndown-chart.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/burndown-chart.prompt.md) | Mermaid burndown chart for the current sprint based on issue close dates |
+| [stakeholder-update.prompt.md](prompts/stakeholder-update.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/stakeholder-update.prompt.md) | Management-ready sprint update: executive summary + risk table, generated in seconds |
 
 > **Tip:** Run `setup.agent.md` once to generate pre-configured versions of all five prompts in `prompts/configured/`. Those versions skip all setup questions and go straight to the analysis.
 
