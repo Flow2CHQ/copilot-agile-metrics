@@ -2,7 +2,7 @@
 name: Burndown Chart
 description: Generate a Mermaid burndown chart for the current sprint — ideal burndown line vs. actual burndown based on issue close dates.
 argument-hint: "Sprint name and date range (e.g. 'Sprint 12, 2026-04-14 – 2026-04-25')"
-mode: agent
+agent: agent
 ---
 
 ## Before You Begin — Tell Copilot About Your Setup

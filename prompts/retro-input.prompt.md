@@ -2,7 +2,7 @@
 name: Retro Input
 description: Generate retrospective input from the last sprint — identify patterns in labels, comments, and closed issues to fuel a productive team retrospective.
 argument-hint: "Completed sprint name or milestone (e.g. 'Sprint 11')"
-mode: agent
+agent: agent
 ---
 
 ## Before You Begin — Tell Copilot About Your Setup

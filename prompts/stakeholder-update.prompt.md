@@ -2,7 +2,7 @@
 name: Stakeholder Update
 description: Generate a management-ready sprint update — executive summary plus a risk and issue table, produced in seconds from live GitHub data.
 argument-hint: "Sprint or milestone name (e.g. 'Sprint 12')"
-mode: agent
+agent: agent
 ---
 
 ## Before You Begin — Tell Copilot About Your Setup
