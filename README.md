@@ -13,7 +13,7 @@
 
 | Prompt | Install | Description |
 |--------|---------|-------------|
-| [setup.agent.md](prompts/setup.agent.md) | [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](vscode:chat-agent/install?url=https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/setup.agent.md) [![Download](https://img.shields.io/badge/Raw-download-grey?style=flat-square&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/setup.agent.md) | **One-time setup wizard.** Asks about your project structure once, then generates personalised, pre-configured versions of all five analysis prompts in `prompts/configured/`. **VS Code only** — requires Agent mode to write files. |
+| [setup.agent.md](prompts/setup.agent.md) | [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Achat-agent%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2FFlow2CHQ%2Fcopilot-agile-metrics%2Fmain%2Fprompts%2Fsetup.agent.md) [![Download](https://img.shields.io/badge/Raw-download-grey?style=flat-square&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/setup.agent.md) | **One-time setup wizard.** Asks about your project structure once, then generates personalised, pre-configured versions of all five analysis prompts in `prompts/configured/`. **VS Code only** — requires Agent mode to write files. |
 
 ### Analysis prompts (generic — ask setup questions each time)
 
