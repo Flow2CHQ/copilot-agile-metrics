@@ -13,7 +13,9 @@
 
 | Prompt | Install | Description |
 |--------|---------|-------------|
-| [setup.agent.md](prompts/setup.agent.md) | [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Achat-agent%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2FFlow2CHQ%2Fcopilot-agile-metrics%2Fmain%2Fprompts%2Fsetup.agent.md) [![Download](https://img.shields.io/badge/Raw-download-grey?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/setup.agent.md) | **One-time setup wizard.** Asks about your project structure once, then generates personalised, pre-configured versions of all five analysis prompts in `prompts/configured/`. **VS Code only** — requires Agent mode to write files. |
+| [setup.agent.md](prompts/setup.agent.md) | [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect?url=vscode%3Achat-agent%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2FFlow2CHQ%2Fcopilot-agile-metrics%2Fmain%2Fprompts%2Fsetup.agent.md) [![Download](https://img.shields.io/badge/Raw-download-grey?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/setup.agent.md) | **One-time setup wizard.** Asks about your project structure once, then generates personalised, pre-configured versions of all five analysis prompts in `.github/prompts/`. **VS Code only** — requires Agent mode to write files. |
+
+> **After installing:** Open Copilot Chat (`⌃⌘I` / `Ctrl+Alt+I`), click the **Agent ∨** dropdown at the bottom of the chat panel, select **Setup — Generate Configured Prompts**, then send any message (e.g. `start`) to begin the wizard.
 
 ### Analysis prompts (generic — ask setup questions each time)
 
@@ -25,7 +27,7 @@
 | [burndown-chart.prompt.md](prompts/burndown-chart.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/burndown-chart.prompt.md) | Mermaid burndown chart for the current sprint based on issue close dates |
 | [stakeholder-update.prompt.md](prompts/stakeholder-update.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/stakeholder-update.prompt.md) | Management-ready sprint update: executive summary + risk table, generated in seconds |
 
-> **Tip:** Run `setup.agent.md` once to generate pre-configured versions of all five prompts in `prompts/configured/`. Those versions skip all setup questions and go straight to the analysis.
+> **Tip:** Run the setup wizard once to generate pre-configured versions of all five prompts in `.github/prompts/`. Those versions skip all setup questions and go straight to the analysis.
 
 ---
 
