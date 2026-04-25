@@ -1,7 +1,7 @@
 ---
 name: Burndown Chart
 description: Generate a Mermaid burndown chart for the current sprint — ideal burndown line vs. actual burndown based on issue close dates.
-argument-hint: "Sprint name and date range (e.g. 'Sprint 12, 2026-04-14 – 2026-04-25')"
+argument-hint: "Sprint name or milestone (e.g. 'Sprint 12' or 'v2.1')"
 agent: agent
 ---
 
@@ -18,15 +18,9 @@ Before fetching any data, ask the user the following questions **in a single mes
 
 2. **Which sprint do you want to chart?** Provide the milestone name, iteration name, or label — matching your answer above.
 
-3. **What is the sprint start date?** *(Format: YYYY-MM-DD, e.g. 2025-05-05)*
-
-4. **What is the sprint end date?** *(Format: YYYY-MM-DD, e.g. 2025-05-16)*
-
-5. **How many issues were in scope at the start of this sprint?** *(This is the starting point of the ideal burndown line. If you're not sure, estimate the number of issues that were open and assigned to this sprint on day 1.)*
-
 ---
 
-Once you have the answers, use them as `SPRINT_START_DATE`, `SPRINT_END_DATE`, `TOTAL_ISSUES_AT_SPRINT_START`, and the sprint identifier throughout all steps below.
+Once you have the answers, use the sprint identifier throughout all steps below. Derive `SPRINT_START_DATE`, `SPRINT_END_DATE`, and `TOTAL_ISSUES_AT_SPRINT_START` automatically in Step 1.
 
 > **How this burndown works:**
 >
@@ -41,13 +35,25 @@ Once you have the answers, use them as `SPRINT_START_DATE`, `SPRINT_END_DATE`, `
 
 You are helping a software team visualise sprint progress as a burndown chart.
 
-## Step 1 — Load sprint data
+## Step 1 — Load sprint data and derive date range
 
-Use the GitHub API to fetch all issues in the milestone defined in `CURRENT_SPRINT_MILESTONE` that were **closed** between `SPRINT_START_DATE` and today (inclusive).
+**Derive sprint boundaries automatically:**
 
-For each closed issue, record the `closedAt` date (date portion only, strip the time component).
+- If using a **GitHub Milestone:**
+  1. Fetch the milestone matching the sprint identifier. Use its `due_on` date as `SPRINT_END_DATE`.
+  2. Fetch all closed milestones in the repository, sorted by `due_on` descending. Find the most recently closed milestone whose `due_on` is before the current milestone's `due_on` — use that milestone's `due_on` as `SPRINT_START_DATE`.
+  3. If no prior milestone exists or `due_on` is null for either milestone, ask the user for the missing date(s) before continuing.
 
-Also fetch the count of issues that are still **open** as of today.
+- If using a **GitHub Projects v2 Iteration:**
+  1. Look up the iteration matching the sprint identifier. Use its `startDate` as `SPRINT_START_DATE` and `endDate` as `SPRINT_END_DATE`.
+
+**Fetch all sprint issues:**
+
+Fetch **all issues — both open and closed** — assigned to this sprint. The total count is `TOTAL_ISSUES_AT_SPRINT_START`.
+
+For each **closed** issue, record the `closedAt` date (date portion only, strip the time component).
+
+Note how many issues are still **open** as of today.
 
 ## Step 2 — Build the daily burndown series
 

@@ -2,7 +2,7 @@
 name: Sprint Analysis
 description: Analyse the current sprint — open issues, at-risk items, blockers, and workload distribution by assignee.
 argument-hint: "Sprint name or milestone (e.g. 'Sprint 12' or 'v2.1')"
-mode: agent
+agent: agent
 ---
 
 ## Before You Begin — Tell Copilot About Your Setup
