@@ -2,8 +2,21 @@
 
 > Reusable GitHub Copilot prompt files for analysing GitHub Projects — works out-of-the-box in **VS Code Copilot Chat** and the **GitHub Web UI**.
 
-[![Awesome Copilot](https://img.shields.io/badge/awesome--copilot-prompts-blue?style=for-the-badge)](https://github.com/github/awesome-copilot)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-green?style=for-the-badge)](LICENSE)
+[![Inspired by Awesome Copilot](https://img.shields.io/badge/inspired%20by-awesome--copilot-blue?style=for-the-badge)](https://github.com/github/awesome-copilot)
+
+---
+
+## Prerequisites
+
+| Requirement | Details |
+|-------------|----------|
+| **GitHub Copilot plan** | **Pro, Business, or Enterprise** required. The setup wizard (`setup.agent.md`) uses Agent mode to write files — this feature is not available on the Free plan. The five analysis prompts work on all plans that include Copilot Chat. |
+| **VS Code extensions** | [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) + [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) |
+| **GitHub repository** | Your issues must live in a GitHub repository (github.com). GitHub Enterprise Server is not supported. |
+| **Agent mode** | Required for the setup wizard. In VS Code, select **Agent** in the mode dropdown at the bottom of the Copilot Chat panel. |
+
+> **Not sure which plan you have?** Go to [github.com/settings/copilot](https://github.com/settings/copilot) and check your current subscription.
 
 ---
 
@@ -23,7 +36,7 @@
 |--------|---------|-------------|
 | [sprint-analysis.prompt.md](prompts/sprint-analysis.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/sprint-analysis.prompt.md) | Analyse the current sprint — open issues, at-risk items, blockers, workload by assignee |
 | [retro-input.prompt.md](prompts/retro-input.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/retro-input.prompt.md) | Generate retrospective input from the last sprint — label patterns, discussion load, communication gaps |
-| [monte-carlo-forecast.prompt.md](prompts/monte-carlo-forecast.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/monte-carlo-forecast.prompt.md) | Throughput-based probabilistic forecast — when will the remaining issues be done? |
+| [monte-carlo-forecast.prompt.md](prompts/monte-carlo-forecast.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/monte-carlo-forecast.prompt.md) | Throughput-based probabilistic forecast — when will the remaining issues be done? *(Note: uses throughput percentiles, not a full Monte Carlo simulation)* |
 | [burndown-chart.prompt.md](prompts/burndown-chart.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/burndown-chart.prompt.md) | Mermaid burndown chart for the current sprint based on issue close dates |
 | [stakeholder-update.prompt.md](prompts/stakeholder-update.prompt.md) | [![Download](https://img.shields.io/badge/Raw-download-0098FF?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Flow2CHQ/copilot-agile-metrics/main/prompts/stakeholder-update.prompt.md) | Management-ready sprint update: executive summary + risk table, generated in seconds |
 
@@ -85,7 +98,9 @@ For automatically tracked Cycle Time, Time-in-State distributions, and real Mont
 
 ## Contributing
 
-Contributions are welcome! Please:
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
+
+Quick summary:
 
 1. Fork the repository and create a feature branch.
 2. Follow the existing prompt structure: YAML frontmatter (`name` + `description`) and a `## Before You Begin` section that asks for required parameters interactively.
@@ -93,6 +108,8 @@ Contributions are welcome! Please:
 4. Open a pull request with a short description of what the prompt does and what GitHub data it requires.
 
 Please keep prompts language-agnostic (English), self-contained, and honest about what Copilot can and cannot compute.
+
+See also: [Code of Conduct](CODE_OF_CONDUCT.md) · [Security Policy](SECURITY.md)
 
 ---
 

@@ -1,6 +1,6 @@
 ---
-name: Monte Carlo Forecast
-description: Throughput-based probabilistic forecast — estimate when the remaining issues in your current milestone will be done using three scenarios (optimistic, realistic, pessimistic).
+name: Throughput Forecast
+description: Throughput-based probabilistic forecast — estimate when the remaining issues in your current milestone will be done using three scenarios (optimistic, realistic, pessimistic). Based on throughput percentiles, not a full Monte Carlo simulation.
 argument-hint: "Milestone or scope to forecast (e.g. 'v3.0' or 'Backlog label:feature')"
 agent: agent
 ---
