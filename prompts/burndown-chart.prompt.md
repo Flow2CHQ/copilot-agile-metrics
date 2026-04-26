@@ -18,9 +18,14 @@ Before fetching any data, ask the user the following questions **in a single mes
 
 2. **Which sprint do you want to chart?** Provide the milestone name, iteration name, or label — matching your answer above.
 
+3. **Sprint start and end date** — answer depends on your tracking method:
+   - *Milestone:* Leave blank — I'll derive the dates from the milestone's `due_on` and the previous milestone automatically.
+   - *GitHub Projects v2 Iteration field:* Leave blank — I'll read `startDate` and `endDate` from the iteration directly.
+   - *Labels, custom select field, or anything else:* Please provide both dates explicitly: **sprint start date** and **sprint end date** (format: YYYY-MM-DD). GitHub Copilot cannot read sprint boundaries from custom fields or labels.
+
 ---
 
-Once you have the answers, use the sprint identifier throughout all steps below. Derive `SPRINT_START_DATE`, `SPRINT_END_DATE`, and `TOTAL_ISSUES_AT_SPRINT_START` automatically in Step 1.
+Once you have the answers, use the sprint identifier and date information throughout all steps below. Derive `SPRINT_START_DATE` and `SPRINT_END_DATE` automatically only for Milestone and Iteration tracking — for all other methods, use the dates provided by the user.
 
 > **How this burndown works:**
 >
@@ -37,15 +42,19 @@ You are helping a software team visualise sprint progress as a burndown chart.
 
 ## Step 1 — Load sprint data and derive date range
 
-**Derive sprint boundaries automatically:**
+**Determine sprint boundaries:**
 
 - If using a **GitHub Milestone:**
   1. Fetch the milestone matching the sprint identifier. Use its `due_on` date as `SPRINT_END_DATE`.
   2. Fetch all closed milestones in the repository, sorted by `due_on` descending. Find the most recently closed milestone whose `due_on` is before the current milestone's `due_on` — use that milestone's `due_on` as `SPRINT_START_DATE`.
   3. If no prior milestone exists or `due_on` is null for either milestone, ask the user for the missing date(s) before continuing.
 
-- If using a **GitHub Projects v2 Iteration:**
+- If using a **GitHub Projects v2 Iteration field:**
   1. Look up the iteration matching the sprint identifier. Use its `startDate` as `SPRINT_START_DATE` and `endDate` as `SPRINT_END_DATE`.
+  2. If the iteration dates cannot be read via the GraphQL Projects API, inform the user and ask them to provide the dates manually (format: YYYY-MM-DD) before continuing.
+
+- If using **labels, a custom select field, or any other method:**
+  Use the start and end dates provided by the user in the setup answers. Do not attempt to derive dates from GitHub data — custom fields and labels do not contain sprint boundary information that GitHub Copilot can reliably access.
 
 **Fetch all sprint issues:**
 
