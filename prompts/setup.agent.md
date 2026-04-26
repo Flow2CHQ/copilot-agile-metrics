@@ -91,22 +91,9 @@ Create the directory `.github/prompts/` if it does not exist.
 
 For each of the five prompts below, create a new file in `.github/prompts/` using the exact content specified. Replace every `{placeholder}` with the confirmed configuration values.
 
-Substitute the sprint-tracking method description from the user's answer into the relevant filter instructions: if they use Milestones, use `milestone:"{sprint_name}"` as the filter; if they use a GitHub Projects v2 Iteration field, use GraphQL to query the Projects API; if they use labels, use `label:{label_value}`; if they use a custom field, adapt accordingly. Embed the resolved filter strategy directly into the prompt text instead of a generic description.
+Substitute the sprint-tracking method description from the user's answer into the relevant filter instructions: if they use Milestones, use `milestone:"{sprint_name}"` as the filter; if they use a GitHub Projects v2 Iteration field, use GraphQL to query the Projects API; if they use labels, use `label:{label_value}`; if they use a custom field, note that Case (d) applies and no filter can be pre-configured. Embed the resolved filter strategy directly into the prompt text instead of a generic description.
 
-For the **burndown prompt** specifically: if the user's sprint tracking method is custom fields, labels, or anything other than Milestone or Projects v2 Iteration, insert the following "Before You Begin" section at the very top of the generated `.github/prompts/burndown-chart.prompt.md` (before the `You are helping…` line):
-
-```
-## Before You Begin — Sprint dates required
-
-Before fetching any data, ask the user:
-
-**Please provide the sprint start and end date for {current_sprint} (format: YYYY-MM-DD).**
-Your sprint tracking method ({sprint_tracking_method_summary}) does not expose date boundaries via the GitHub API, so I cannot derive them automatically.
-
-Wait for the dates before proceeding.
-```
-
-For Milestone and Projects v2 Iteration methods, omit this section entirely — dates are derived automatically.
+For the **burndown prompt** specifically: the generated prompt already contains all four cases (a–d) with the correct "Before You Begin" questions. Do not add a separate date-ask section — the prompt handles all tracking methods including the fallback automatically.
 
 ---
 
@@ -440,6 +427,26 @@ agent: agent
 > **How this burndown works:** Uses `closedAt` dates to reconstruct daily remaining issues. Shows an ideal burndown line and an actual burndown line. If the sprint is still running, a projection line is added.
 >
 > **Limitation:** Based on close dates only — not on within-sprint status transitions.
+>
+> **Fallback mode (option d):** When sprint tracking uses custom fields that are not queryable via the standard GitHub API, the burndown is approximated using all issues closed in the repository since sprint start. This may include issues closed outside the sprint scope. A clean team process minimises this error.
+
+## Before You Begin
+
+Before fetching any data, ask the user:
+
+**Sprint {current_sprint} — a few quick questions before I start:**
+
+1. **Which option matches your sprint tracking setup?**
+   - **(a) Milestone** — dates derived automatically
+   - **(b) Label** — please provide sprint start and end date (YYYY-MM-DD)
+   - **(c) GitHub Projects v2 Iteration field** — dates read via GraphQL; provide dates as fallback if GraphQL fails
+   - **(d) Projects v2 custom field or other** — please provide start date, end date, and total number of issues in this sprint
+
+2. For options (b), (c), (d): **Sprint start date and end date** (YYYY-MM-DD)
+
+3. For option (d) only: **Total number of issues in this sprint** (readable in the GitHub Projects sprint view)
+
+Wait for the answers before proceeding.
 
 ---
 
@@ -447,31 +454,31 @@ You are helping a software team visualise sprint progress as a burndown chart.
 
 ## Step 1 — Load sprint data and derive date range
 
-**Determine sprint boundaries:**
+Follow the case that matches the user's tracking method:
 
-- If using a **GitHub Milestone:**
-  1. Fetch the milestone matching **{current_sprint}**. Use its `due_on` date as `SPRINT_END_DATE`.
-  2. Fetch all closed milestones, sorted by `due_on` descending. Find the most recently closed milestone whose `due_on` is before the current milestone's `due_on` — use that milestone's `due_on` as `SPRINT_START_DATE`.
-  3. If no prior milestone exists or `due_on` is null for either, ask the user for the missing date(s) before continuing.
+**Case (a) — GitHub Milestone:**
+1. Fetch the milestone matching **{current_sprint}**. Use its `due_on` date as `SPRINT_END_DATE`.
+2. Fetch all closed milestones sorted by `due_on` descending. Find the most recently closed milestone whose `due_on` is before the current milestone's `due_on` — use that as `SPRINT_START_DATE`.
+3. If no prior milestone exists or `due_on` is null, ask the user for the missing date(s) before continuing.
+4. Fetch all issues (open and closed) filtered by `milestone:"{current_sprint}"` using the REST API. Apply the filter server-side — do not load all repository issues and filter afterwards.
 
-- If using a **GitHub Projects v2 Iteration field:**
-  1. Look up the iteration matching **{current_sprint}**. Use its `startDate` as `SPRINT_START_DATE` and `endDate` as `SPRINT_END_DATE`.
-  2. If the iteration dates cannot be read via the GraphQL Projects API, inform the user and ask them to provide the dates manually (format: YYYY-MM-DD) before continuing.
+**Case (b) — Label:**
+1. Use the dates provided by the user as `SPRINT_START_DATE` and `SPRINT_END_DATE`.
+2. Fetch all issues (open and closed) filtered by `label:{resolved_filter_strategy}` using the REST API. Apply the filter server-side.
 
-- If using **labels, a custom select field, or any other method:**
-  Use the start and end dates provided by the user above. Do not attempt to derive dates from GitHub data — custom fields and labels do not contain sprint boundary information that GitHub Copilot can reliably access.
+**Case (c) — GitHub Projects v2 Iteration field:**
+1. Look up the iteration matching **{current_sprint}** via the GraphQL Projects API. Use its `startDate` as `SPRINT_START_DATE` and `endDate` as `SPRINT_END_DATE`.
+2. Fetch all issues belonging to this iteration via GraphQL.
+3. If the GraphQL call fails or returns no results, fall back to **Case (d)**: inform the user, ask for start date, end date, and total issue count, then continue as described there.
 
-**Fetch all sprint issues:**
+**Case (d) — Projects v2 custom field, or fallback when the Projects API is unavailable:**
+1. Use the dates provided by the user as `SPRINT_START_DATE` and `SPRINT_END_DATE`.
+2. Use the total issue count provided by the user as `TOTAL_ISSUES_AT_SPRINT_START`.
+3. Fetch all issues in the repository that were closed on or after `SPRINT_START_DATE` using `GET /repos/{owner/repo}/issues?state=closed&since=SPRINT_START_DATE`. This is the best available approximation — it may include issues closed outside the sprint scope.
+4. Derive open count as: `TOTAL_ISSUES_AT_SPRINT_START` minus number of fetched closed issues. Clamp to a minimum of 0.
 
-Fetch **all issues — both open and closed** — assigned to **{current_sprint}** in `{owner/repo}`.
-Apply the filter server-side when fetching (do not load all repository issues and filter afterwards):
-Filter: {resolved_filter_strategy}
-
-The total count is `TOTAL_ISSUES_AT_SPRINT_START`.
-
-For each **closed** issue, record the `closedAt` date (date portion only, strip the time component).
-
-Note how many issues are still **open** as of today.
+**For Cases (a), (b), (c):**
+The total count of fetched issues is `TOTAL_ISSUES_AT_SPRINT_START`. For each **closed** issue, record the `closedAt` date (date portion only, strip the time component). Note how many issues are still **open** as of today.
 
 ## Step 2 — Build daily series
 

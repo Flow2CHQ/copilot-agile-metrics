@@ -63,6 +63,10 @@ The **Raw** links let you download the generic (unconfigured) version of each pr
 
 GitHub Copilot reads the **current state** of issues and projects via the GitHub API. It does **not** have access to historical status-change events — meaning it cannot determine when an issue moved from *"In Progress"* to *"Done"* or how long it spent in a particular workflow column.
 
+> **GitHub Projects v2 — important caveat:** Custom fields (e.g. a "Sprint" select field) and Iteration fields are only accessible via the GraphQL API, which GitHub Copilot does not use by default. This means sprint boundaries and custom field values **cannot be read automatically** in most setups.
+>
+> **Recommendation:** For reliable sprint filtering, use **Milestones** (one per sprint, with a due date) or **Labels** (e.g. `sprint-42`). Both work with the standard REST API and require no additional configuration. If you use Projects v2 Iterations, the prompts will attempt to read the dates via GraphQL and ask you to provide them manually as a fallback.
+
 As a result, the following metrics **cannot be computed** by these prompts:
 
 | Metric | Why it's unavailable |
