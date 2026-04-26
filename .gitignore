@@ -11,7 +11,7 @@
 # Generated prompt files (created by setup.agent.md — project-specific, not for committing)
 .github/prompts/sprint-analysis.prompt.md
 .github/prompts/retro-input.prompt.md
-.github/prompts/monte-carlo-forecast.prompt.md
+.github/prompts/throughput-forecast.prompt.md
 .github/prompts/burndown-chart.prompt.md
 .github/prompts/stakeholder-update.prompt.md
 

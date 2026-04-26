@@ -81,7 +81,8 @@ For each calendar day from `SPRINT_START_DATE` to `SPRINT_END_DATE` (inclusive):
 
 1. Count how many issues were closed **on or before** that day (cumulative closed count).
 2. Remaining issues on that day = `TOTAL_ISSUES_AT_SPRINT_START` − cumulative closed count.
-3. If a day is in the future (after today), mark it as a **forecast** point (see Step 3).
+3. **Round all remaining values to whole integers** — no decimals anywhere in this step.
+4. If a day is in the future (after today), mark it as a **forecast** point (see Step 3) but **do not compute an actual value for it**.
 
 Produce a table:
 
@@ -90,8 +91,8 @@ Produce a table:
 | SPRINT_START_DATE | TOTAL_ISSUES_AT_SPRINT_START | TOTAL_ISSUES_AT_SPRINT_START | actual |
 | ... | ... | ... | actual |
 | today | ... | ... | actual |
-| ... | ... | ... | forecast |
-| SPRINT_END_DATE | 0 | ... | forecast |
+| ... | ... | — | forecast |
+| SPRINT_END_DATE | 0 | — | forecast |
 
 **Ideal remaining formula:**  
 $\text{Ideal}_d = \text{TOTAL} \times \left(1 - \frac{d - \text{start}}{\text{end} - \text{start}}\right)$
@@ -105,30 +106,29 @@ If today's date is before `SPRINT_END_DATE`, compute a simple linear projection:
 - Current daily close rate = cumulative closed issues so far ÷ number of sprint days elapsed
 - Projected remaining at sprint end = current remaining − (daily rate × days left until sprint end)
 - Clamp projected remaining to a minimum of 0
-
-Add the projected value for `SPRINT_END_DATE` to the forecast portion of the table.
+- **Do not render the projection as a third Mermaid line.** Include the projected finish date and remaining count in the written Sprint Health Snapshot instead.
 
 ## Step 4 — Generate the Mermaid chart
 
-Using the data from Step 2 and Step 3, produce the following Mermaid `xychart-beta` diagram.
+Using the data from Step 2, produce a Mermaid `xychart-beta` diagram with exactly **two lines**: Ideal and Actual.
 
-Include:
-- The **ideal** line (straight, from total to 0)
-- The **actual** line (based on real `closedAt` data)
-- If the sprint is still running, include a **forecast** annotation in the summary text (add a sentence explaining the projected finish date)
-
-Replace all `{placeholders}` with actual computed values before rendering. Ensure every date in the x-axis corresponds to a value in both line arrays (use `null` for future actual values so the line stops at today).
+Rules for renderer stability:
+- **x-axis labels**: use short `MM-DD` format (e.g. `04-13, 04-14, 04-15`). Do **not** use full ISO dates like `2026-04-13`.
+- **Only include days up to today** in both line arrays — do not extend arrays into future dates and do not use `null` or placeholder values.
+- **All values must be whole integers** — no decimals.
+- **Title**: keep it short (e.g. `"Burndown {CURRENT_SPRINT_MILESTONE}"`).
+- **Two lines only**: `Ideal` and `Actual`. No projection line.
 
 Render the diagram by calling the renderMermaidDiagram tool with the Mermaid markup directly — do NOT output a fenced code block. Pass only the raw diagram markup (without ```mermaid wrapper) as the markup parameter, and a short descriptive title as the title parameter.
 
 Example markup to pass (with placeholders filled in):
 
 xychart-beta
-    title "Sprint Burndown — {CURRENT_SPRINT_MILESTONE}"
-    x-axis [{comma-separated list of dates from SPRINT_START_DATE to SPRINT_END_DATE}]
-    y-axis "Issues Remaining" 0 --> {TOTAL_ISSUES_AT_SPRINT_START}
-    line "Ideal"  [{comma-separated ideal remaining values}]
-    line "Actual" [{comma-separated actual remaining values, use null for future dates}]
+    title "Burndown {CURRENT_SPRINT_MILESTONE}"
+    x-axis [04-13, 04-14, 04-15, 04-16]
+    y-axis "Remaining Issues" 0 --> {TOTAL_ISSUES_AT_SPRINT_START}
+    line "Ideal"  [19, 17, 15, 13]
+    line "Actual" [19, 16, 16, 15]
 
 ---
 
