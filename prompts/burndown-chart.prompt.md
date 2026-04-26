@@ -58,7 +58,7 @@ You are helping a software team visualise sprint progress as a burndown chart.
 
 **Fetch all sprint issues:**
 
-Fetch **all issues — both open and closed** — assigned to this sprint. The total count is `TOTAL_ISSUES_AT_SPRINT_START`.
+Fetch **all issues — both open and closed** — assigned to this sprint. Apply the filter server-side when fetching — do not load all repository issues and filter afterwards. The total count is `TOTAL_ISSUES_AT_SPRINT_START`.
 
 For each **closed** issue, record the `closedAt` date (date portion only, strip the time component).
 
