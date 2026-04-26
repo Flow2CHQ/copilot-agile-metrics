@@ -311,11 +311,11 @@ If all signals positive: *Good sprint — focus the retro on what to keep doing.
 
 ---
 
-### File 3 — `.github/prompts/monte-carlo-forecast.prompt.md`
+### File 3 — `.github/prompts/throughput-forecast.prompt.md`
 
 ````markdown
 ---
-name: Monte Carlo Forecast — {team_name_or_repo}
+name: Throughput Forecast — {team_name_or_repo}
 description: Throughput-based delivery forecast for {current_sprint} in {team_name_or_repo}. Pre-configured — no setup needed.
 agent: agent
 ---
@@ -424,7 +424,7 @@ agent: agent
 > Typical sprint duration: **{sprint_duration_days} days**
 > Sprint tracking: {sprint_tracking_method_summary}
 
-> **How this burndown works:** Uses `closedAt` dates to reconstruct daily remaining issues. Shows an ideal burndown line and an actual burndown line. If the sprint is still running, a projection line is added.
+> **How this burndown works:** Uses `closedAt` dates to reconstruct daily remaining issues. Shows an ideal burndown line and an actual burndown line. If the sprint is still running, the projected finish is shown in the written summary — not as a third chart line.
 >
 > **Limitation:** Based on close dates only — not on within-sprint status transitions.
 >
@@ -484,8 +484,9 @@ The total count of fetched issues is `TOTAL_ISSUES_AT_SPRINT_START`. For each **
 
 For each calendar day from sprint start to sprint end:
 - Cumulative closed on or before that day
-- Remaining = total_at_start − cumulative_closed
-- Ideal remaining = total_at_start × (1 − (day − start) / (end − start))
+- Remaining = total_at_start − cumulative_closed (**round to whole integer**)
+- Ideal remaining = total_at_start × (1 − (day − start) / (end − start)) (**round to whole integer**)
+- For days in the future (after today): record ideal value only, **no actual value**
 
 | Date | Ideal Remaining | Actual Remaining | Status |
 |------|----------------|-----------------|--------|
@@ -494,19 +495,27 @@ For each calendar day from sprint start to sprint end:
 
 Daily close rate = closed so far ÷ elapsed days.
 Projected remaining at sprint end = current remaining − (rate × days left). Clamp to 0.
+**Do not render projection as a Mermaid line.** Include projected finish date in the Sprint Health Snapshot text.
 
 ## Step 4 — Mermaid chart
 
 Render the diagram by calling the renderMermaidDiagram tool with the Mermaid markup directly — do NOT output a fenced code block. Pass only the raw diagram markup (without ```mermaid wrapper) as the markup parameter, and a short descriptive title as the title parameter.
 
+Rules for renderer stability:
+- **x-axis labels**: short `MM-DD` format only (e.g. `04-13, 04-14`). No full ISO dates.
+- **Only days up to today** in both line arrays — no future dates, no `null` values.
+- **All values: whole integers only.**
+- **Two lines only**: `Ideal` and `Actual`.
+- **Title**: keep short.
+
 Example markup to pass (with placeholders filled in):
 
 xychart-beta
-    title "Sprint Burndown — {current_sprint}"
-    x-axis [{dates}]
-    y-axis "Issues Remaining" 0 --> {total_at_start}
-    line "Ideal"  [{ideal_values}]
-    line "Actual" [{actual_values_null_for_future}]
+    title "Burndown {current_sprint}"
+    x-axis [04-13, 04-14, 04-15, 04-16]
+    y-axis "Remaining Issues" 0 --> {total_at_start}
+    line "Ideal"  [19, 17, 15, 13]
+    line "Actual" [19, 16, 16, 15]
 
 ---
 
@@ -651,7 +660,7 @@ After creating all five files, tell the user:
 |--------|------|
 | Sprint Analysis | `.github/prompts/sprint-analysis.prompt.md` |
 | Retro Input | `.github/prompts/retro-input.prompt.md` |
-| Monte Carlo Forecast | `.github/prompts/monte-carlo-forecast.prompt.md` |
+| Throughput Forecast | `.github/prompts/throughput-forecast.prompt.md` |
 | Burndown Chart | `.github/prompts/burndown-chart.prompt.md` |
 | Stakeholder Update | `.github/prompts/stakeholder-update.prompt.md` |
 

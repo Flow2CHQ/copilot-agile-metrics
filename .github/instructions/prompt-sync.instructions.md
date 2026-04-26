@@ -1,5 +1,5 @@
 ---
-description: "Use when editing any file in prompts/ — especially burndown-chart.prompt.md, monte-carlo-forecast.prompt.md, sprint-analysis.prompt.md, retro-input.prompt.md, stakeholder-update.prompt.md, or setup.agent.md. Ensures that changes to individual prompts are always reflected in the setup agent template, and vice versa."
+description: "Use when editing any file in prompts/ — especially burndown-chart.prompt.md, throughput-forecast.prompt.md, sprint-analysis.prompt.md, retro-input.prompt.md, stakeholder-update.prompt.md, or setup.agent.md. Ensures that changes to individual prompts are always reflected in the setup agent template, and vice versa."
 applyTo: "prompts/**"
 ---
 
@@ -21,7 +21,7 @@ Prüfe, ob die Änderung eine Logik betrifft, die auch im Original-Prompt `promp
 |---|---|
 | `prompts/sprint-analysis.prompt.md` | `### File 1 — .github/prompts/sprint-analysis.prompt.md` |
 | `prompts/retro-input.prompt.md` | `### File 2 — .github/prompts/retro-input.prompt.md` |
-| `prompts/monte-carlo-forecast.prompt.md` | `### File 3 — .github/prompts/monte-carlo-forecast.prompt.md` |
+| `prompts/throughput-forecast.prompt.md` | `### File 3 — .github/prompts/throughput-forecast.prompt.md` |
 | `prompts/burndown-chart.prompt.md` | `### File 4 — .github/prompts/burndown-chart.prompt.md` |
 | `prompts/stakeholder-update.prompt.md` | `### File 5 — .github/prompts/stakeholder-update.prompt.md` |
 
