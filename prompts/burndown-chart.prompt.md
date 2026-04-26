@@ -91,8 +91,8 @@ Produce a table:
 | SPRINT_START_DATE | TOTAL_ISSUES_AT_SPRINT_START | TOTAL_ISSUES_AT_SPRINT_START | actual |
 | ... | ... | ... | actual |
 | today | ... | ... | actual |
-| ... | ... | — | forecast |
-| SPRINT_END_DATE | 0 | — | forecast |
+| ... | ... | n/a | forecast |
+| SPRINT_END_DATE | 0 | n/a | forecast |
 
 **Ideal remaining formula:**  
 $\text{Ideal}_d = \text{TOTAL} \times \left(1 - \frac{d - \text{start}}{\text{end} - \text{start}}\right)$
