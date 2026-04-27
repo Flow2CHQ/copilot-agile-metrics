@@ -16,9 +16,8 @@ Before fetching any data, ask the user the following questions **in a single mes
 1. **How does your team track sprints in GitHub?**  
    Describe your setup briefly — common examples:  
    - *One Milestone per sprint* (e.g. "Sprint 42" with a due date)  
-   - *GitHub Projects v2 Iteration field* (the built-in sprint cadence in a Project board)  
-   - *A custom select field in your Project* (e.g. a "Sprint" dropdown with values like "Sprint 42")  
    - *Labels* (e.g. `sprint-42`)  
+   - *GitHub Projects v2* (Iteration field, custom select field, or other board-based tracking)  
    - *A combination or something else* — just describe it in your own words  
 
 2. **Which sprint do you want to analyse?** Provide the name, milestone title, iteration name, or label — matching your answer above.
@@ -27,11 +26,20 @@ Before fetching any data, ask the user the following questions **in a single mes
 
 ---
 
-Once you have the answers, use the sprint identifier and data source to filter issues in all steps below. If the user describes a GitHub Projects v2 Iteration field, query via the GraphQL Projects API. If they use a Milestone, filter by `milestone:"<name>"`. If they use a label, filter by that label. Adapt to whatever setup the user describes.
+Once you have the answers, apply the appropriate filter strategy:
+- **Milestone:** filter by `milestone:"<name>"` server-side.
+- **Label:** filter by `label:<value>` server-side.
+- **GitHub Projects v2 (any field type):** No server-side filter is available — GitHub Copilot cannot query Projects v2 fields directly. Before continuing, ask the user: *"What is the sprint start date? (YYYY-MM-DD)"*. Then fetch all open repository issues. Note this scope limitation at the top of the output: *"⚠️ Scope: all open repository issues — no Projects v2 sprint filter available. Issue age is calculated from the sprint start date you provided."*
 
 You are helping a software team analyse their current sprint using data from GitHub Issues and Projects.
 
 ## Step 1 — Load sprint data
+
+**Data access — how to load issues:** Work through the following in order and use the first that succeeds. Do not attempt Python scripts, raw API calls, or other workarounds.
+
+1. **VS Code GitHub extension tools** (preferred) — if the `github-pull-request_doSearch` tool is available, use it to fetch issues.
+2. **GitHub CLI** — run `gh --version`. If exit code is 0, use `gh issue list --repo <owner/repo> --state open --json number,title,url,assignees,labels,createdAt,comments --limit 200` with the appropriate filter flags (e.g. `--milestone "Sprint 42"` or `--label sprint-42`).
+3. **Neither available** — stop and tell the user: *"I can't load GitHub Issues automatically. Install the [GitHub Pull Request & Issues extension](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) or the [GitHub CLI](https://cli.github.com), then re-run this prompt — or paste your issue list here and I'll analyse it directly."*
 
 Fetch all **open issues** belonging to the sprint scope identified in the setup answers.
 

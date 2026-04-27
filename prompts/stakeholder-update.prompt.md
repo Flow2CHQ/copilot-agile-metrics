@@ -13,7 +13,9 @@ Before fetching any data, ask the user the following questions **in a single mes
 
 **Please answer a few quick questions so I can generate the stakeholder update:**
 
-1. **Which sprint or milestone do you want to report on?** Provide the milestone name, iteration name, or project identifier (e.g. "Sprint 42", "Q2 Release").
+1. **Which milestone should this update cover?**
+   Provide the exact GitHub milestone name (e.g. "v2.0", "Sprint 42", "Q3 Release").
+   *(Milestones are the recommended scope for stakeholder updates — they provide a due date and a clear deliverable boundary. If you use GitHub Projects v2 without milestones, create a milestone for the release target and assign your issues to it.)*
 
 2. **How many days before the milestone deadline should an open issue be flagged as time-critical?** *(Default: 3 days — say "default" to accept.)*
 
@@ -21,13 +23,19 @@ Before fetching any data, ask the user the following questions **in a single mes
 
 ---
 
-Once you have the answers, use the sprint/milestone identifier and the two thresholds throughout all steps below.
+Once you have the answers, use `milestone:"<name>"` as the filter throughout all steps. The milestone's `due_on` date is used for days-remaining and deadline risk calculations.
 
 You are helping a software team produce a concise, management-ready sprint status update using live data from GitHub Issues.
 
 ## Step 1 — Load milestone data
 
-Fetch the milestone or sprint scope identified in the setup answers (fall back to the nearest open milestone if not specified).
+**Data access — how to load issues:** Work through the following in order and use the first that succeeds. Do not attempt Python scripts, raw API calls, or other workarounds.
+
+1. **VS Code GitHub extension tools** (preferred) — if the `github-pull-request_doSearch` tool is available, use it to fetch issues.
+2. **GitHub CLI** — run `gh --version`. If exit code is 0, use `gh issue list --repo <owner/repo> --state all --json number,title,url,state,assignees,labels,createdAt,closedAt,comments --limit 200` with the appropriate filter flags.
+3. **Neither available** — stop and tell the user: *"I can't load GitHub Issues automatically. Install the [GitHub Pull Request & Issues extension](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) or the [GitHub CLI](https://cli.github.com), then re-run this prompt — or paste your issue list here and I'll analyse it directly."*
+
+Fetch the milestone identified in the setup answers using `milestone:"<name>"`. If no milestone with that exact name exists, list available open milestones and ask the user to confirm which one to use.
 
 Collect:
 - Milestone title, description, due date (if set)

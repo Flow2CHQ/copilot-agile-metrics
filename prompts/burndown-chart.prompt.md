@@ -16,8 +16,7 @@ Before fetching any data, ask the user the following questions **in a single mes
 1. **How does your team track sprints in GitHub?** Choose the option that fits best:
    - **(a) Milestone** — one milestone per sprint, with a due date
    - **(b) Label** — issues get a label like `sprint-42`
-   - **(c) GitHub Projects v2 Iteration field** — the built-in Iteration field on a Project board
-   - **(d) Projects v2 custom field, or other** — sprint tracked in GitHub Projects but not via Milestone, Label, or built-in Iteration field
+   - **(c) GitHub Projects v2 or other** — sprint tracked in a Project board (Iteration field, custom select field, or anything else not covered by (a) or (b))
 
 2. **Which sprint do you want to chart?**
    Provide the milestone title, label name, or iteration name — matching your answer above.
@@ -25,7 +24,7 @@ Before fetching any data, ask the user the following questions **in a single mes
 3. **Sprint start and end date** *(skip if using option a — I'll derive them from the milestone automatically)*
    Format: YYYY-MM-DD
 
-4. **Total number of issues in this sprint** *(only needed for option d)*
+4. **Total number of issues in this sprint** *(only needed for option c)*
    You can read this directly from the sprint view in GitHub Projects.
 
 ---
@@ -41,13 +40,21 @@ Once you have the answers, use the sprint identifier and date information throug
 >
 > **Limitation:** The burndown is based on issue close dates only, not on within-sprint status transitions. If an issue was reopened and re-closed, or moved between columns without being closed, this chart will not reflect those intermediate states accurately.
 >
-> **Fallback mode (option d):** When sprint tracking uses custom fields that are not queryable via the standard GitHub API, the burndown is approximated using all issues closed in the repository since sprint start. This may include issues closed outside the sprint scope. A clean team process — closing issues only within their sprint — minimises this error.
+> **Fallback mode (option c):** When sprint tracking uses GitHub Projects v2 (any field type), the burndown is approximated using all issues closed in the repository since sprint start. This may include issues closed outside the sprint scope. A clean team process — closing issues only within their sprint — minimises this error.
 
 ---
 
 You are helping a software team visualise sprint progress as a burndown chart.
 
 ## Step 1 — Load sprint data and derive date range
+
+**Data access — how to load issues:** Work through the following in order and use the first that succeeds. Do not attempt Python scripts, raw API calls, or other workarounds.
+
+1. **VS Code GitHub extension tools** (preferred) — if the `github-pull-request_doSearch` tool is available, use it to fetch issues.
+2. **GitHub CLI** — run `gh --version`. If exit code is 0, use `gh issue list --repo <owner/repo> --state all --json number,title,url,state,createdAt,closedAt --limit 200` with the appropriate filter flags for the tracking method.
+3. **Neither available** — stop and tell the user: *"I can't load GitHub Issues automatically. Install the [GitHub Pull Request & Issues extension](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) or the [GitHub CLI](https://cli.github.com), then re-run this prompt — or paste your issue list here and I'll analyse it directly."*
+
+Apply the access method above to fetch issues in the appropriate case (a)–(c) below.
 
 Follow the case that matches the user's tracking method:
 
@@ -61,18 +68,13 @@ Follow the case that matches the user's tracking method:
 1. Use the dates provided by the user as `SPRINT_START_DATE` and `SPRINT_END_DATE`.
 2. Fetch all issues (open and closed) filtered by `label:sprint_identifier` using the REST API. Apply the filter server-side.
 
-**Case (c) — GitHub Projects v2 Iteration field:**
-1. Look up the iteration matching the sprint identifier via the GraphQL Projects API. Use its `startDate` as `SPRINT_START_DATE` and `endDate` as `SPRINT_END_DATE`.
-2. Fetch all issues belonging to this iteration via GraphQL.
-3. If the GraphQL call fails or returns no results, fall back to **Case (d)**: inform the user, ask for start date, end date, and total issue count, then continue as described there.
-
-**Case (d) — Projects v2 custom field, or fallback when the Projects API is unavailable:**
+**Case (c) — GitHub Projects v2 or other:**
 1. Use the dates provided by the user as `SPRINT_START_DATE` and `SPRINT_END_DATE`.
 2. Use the total issue count provided by the user as `TOTAL_ISSUES_AT_SPRINT_START`.
 3. Fetch all issues in the repository that were closed on or after `SPRINT_START_DATE` using `GET /repos/{owner}/{repo}/issues?state=closed&since=SPRINT_START_DATE`. This is the best available approximation — it may include issues closed outside the sprint scope.
 4. Derive open count as: `TOTAL_ISSUES_AT_SPRINT_START` minus number of fetched closed issues. Clamp to a minimum of 0.
 
-**For Cases (a), (b), (c):**
+**For Cases (a) and (b):**
 The total count of fetched issues is `TOTAL_ISSUES_AT_SPRINT_START`. For each **closed** issue, record the `closedAt` date (date portion only, strip the time component). Note how many issues are still **open** as of today.
 
 ## Step 2 — Build the daily burndown series

@@ -16,22 +16,30 @@ Before fetching any data, ask the user the following questions **in a single mes
 1. **How does your team track sprints in GitHub?**  
    Describe your setup briefly — common examples:  
    - *One Milestone per sprint* (e.g. "Sprint 41" with a due date)  
-   - *GitHub Projects v2 Iteration field* (built-in sprint cadence in a Project board)  
-   - *A custom select field in your Project* (e.g. a "Sprint" dropdown)  
    - *Labels* (e.g. `sprint-41`)  
+   - *GitHub Projects v2* (Iteration field, custom select field, or other board-based tracking)  
    - *A combination or something else* — describe it in your own words  
 
-2. **Which sprint do you want to retrospect?** Provide the milestone name, iteration name, label, or a date range (e.g. "the sprint that ended on May 16").
+2. **Which sprint do you want to retrospect?** Provide the milestone name, label, or — if you use GitHub Projects v2 — the sprint **start and end date** (YYYY-MM-DD).
 
 3. **How many comments on an issue count as "high-discussion"?** *(Default: 3 — say "default" to accept.)*
 
 ---
 
-Once you have the answers, use the sprint identifier and data source to filter issues in all steps below. Adapt to whatever setup the user describes.
+Once you have the answers, apply the appropriate filter strategy:
+- **Milestone:** filter by `milestone:"<name>"` server-side. Fall back to the most recently closed milestone if the sprint cannot be identified.
+- **Label:** filter by `label:<value>` server-side.
+- **GitHub Projects v2 (any field type):** No server-side filter is available. Use the start and end dates provided by the user: fetch all issues with `closedAt` between `SPRINT_START_DATE` and `SPRINT_END_DATE` as a proxy for sprint work. Note the scope limitation at the top of the output: *"⚠️ Scope: all issues closed in the date window — no Projects v2 sprint filter available."*
 
 You are helping a software team prepare input for a sprint retrospective using data from GitHub Issues.
 
 ## Step 1 — Load last sprint data
+
+**Data access — how to load issues:** Work through the following in order and use the first that succeeds. Do not attempt Python scripts, raw API calls, or other workarounds.
+
+1. **VS Code GitHub extension tools** (preferred) — if the `github-pull-request_doSearch` tool is available, use it to fetch issues.
+2. **GitHub CLI** — run `gh --version`. If exit code is 0, use `gh issue list --repo <owner/repo> --state all --json number,title,url,state,assignees,labels,createdAt,closedAt,comments --limit 200` with the appropriate filter flags.
+3. **Neither available** — stop and tell the user: *"I can't load GitHub Issues automatically. Install the [GitHub Pull Request & Issues extension](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) or the [GitHub CLI](https://cli.github.com), then re-run this prompt — or paste your issue list here and I'll analyse it directly."*
 
 Fetch all issues associated with the sprint identified in the setup answers (fall back to the most recently closed milestone if the sprint cannot be clearly identified).
 

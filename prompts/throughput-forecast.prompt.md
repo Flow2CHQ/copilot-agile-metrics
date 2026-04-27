@@ -13,13 +13,17 @@ Before fetching any data, ask the user the following questions **in a single mes
 
 **Please answer a few quick questions so I can run the forecast:**
 
-1. **What scope do you want to forecast?** Provide the name of the milestone, iteration, or project board that contains the remaining open work (e.g. "Sprint 42", "Q2 Release", "our current GitHub Project board").
+1. **Which milestone or release target should this forecast cover?**
+   Provide the exact GitHub milestone name (e.g. "v2.0", "Q3 Release", "Sprint 42").
+   *(If your remaining work is not tracked in a GitHub milestone, enter the number of open issues in scope instead — e.g. "42 issues".)*
 
 2. **How many past weeks should I use to calculate throughput?** *(Default: 4 weeks — say "default" to accept.)*
 
 ---
 
-Once you have the answers, use the scope identifier to count remaining open issues and the lookback period to calculate weekly throughput.
+Once you have the answers:
+- If the user provided a **milestone name**: use `milestone:"<name>"` to filter remaining open issues in Step 3.
+- If the user provided a **number of issues directly**: use that number in Step 3 and skip the issue-fetch.
 
 > **Important — what this forecast can and cannot do:**
 >
@@ -38,6 +42,12 @@ Once you have the answers, use the scope identifier to count remaining open issu
 You are helping a software team produce a rough delivery forecast using GitHub Issues data.
 
 ## Step 1 — Load throughput data
+
+**Data access — how to load issues:** Work through the following in order and use the first that succeeds. Do not attempt Python scripts, raw API calls, or other workarounds.
+
+1. **VS Code GitHub extension tools** (preferred) — if the `github-pull-request_doSearch` tool is available, use it to fetch issues.
+2. **GitHub CLI** — run `gh --version`. If exit code is 0, use `gh issue list --repo <owner/repo> --state closed --json number,title,url,closedAt --limit 500` to retrieve recently closed issues.
+3. **Neither available** — stop and tell the user: *"I can't load GitHub Issues automatically. Install the [GitHub Pull Request & Issues extension](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) or the [GitHub CLI](https://cli.github.com), then re-run this prompt — or paste your issue list here and I'll analyse it directly."*
 
 Use the GitHub API to fetch all issues in this repository that:
 - Were **closed** within the last `LOOKBACK_WEEKS` weeks (default: 4)
@@ -67,7 +77,11 @@ Show the weekly breakdown as a table:
 
 ## Step 3 — Count remaining work
 
-Use the GitHub API to count all **open issues** in the milestone defined in `CURRENT_MILESTONE` (or the nearest open milestone).
+**If a milestone name was provided:** Fetch all **open issues** filtered by `milestone:"<name>"` and count them.
+
+**If a number was provided directly:** Use that number as the remaining issue count.
+
+If no milestone exists with the given name and no number was provided, ask the user: *"I couldn't find a milestone with that name. How many open issues are currently in scope? (Enter a number.)"*
 
 Remaining issues: **{count}**
 
