@@ -12,6 +12,34 @@ Your job in this prompt is **not** to run any analysis. Your job is to:
 
 ---
 
+## Step 0 — Detect data access method
+
+**Do this silently before asking the user anything.** Determine which method is available to load GitHub Issues in this environment. Try each option in order and stop at the first that succeeds:
+
+1. **VS Code GitHub extension** — call the `github-pull-request_doSearch` tool with the query `is:issue is:open`. If it responds (even with an empty result), set `access_method = copilot-extension` (display label: "VS Code GitHub extension").
+2. **GitHub CLI** — run `gh --version` in the terminal. If exit code is 0, set `access_method = gh-cli` (display label: "GitHub CLI").
+3. If both fail, set `access_method = none`.
+
+**If `access_method = none`:** Output the message below and wait for the user's reply before continuing to Step 1.
+
+---
+
+> ⚠️ **No automatic GitHub data access method detected.**
+>
+> The prompts this setup generates need a way to read issues from your GitHub repository. Currently, neither of the two supported methods responded:
+>
+> - **VS Code GitHub Pull Request & Issues extension** — [install from the Marketplace](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) and sign in with GitHub.
+> - **GitHub CLI** — [install from cli.github.com](https://cli.github.com), then run `gh auth login`.
+>
+> Re-run this setup after installing one of the above.
+> Or type **continue** to proceed anyway — the generated prompts will include manual data-entry instructions.
+
+---
+
+If the user types **continue**, set `access_method = manual` (display label: "Manual — user provides data"). Proceed to Step 1.
+
+---
+
 ## Step 1 — Collect project configuration
 
 Send the user this message exactly (fill in nothing yet — wait for answers):
@@ -38,7 +66,7 @@ Describe your setup in your own words. Examples of what teams typically use:
 **3. What is the exact name of your current sprint?**
 *(e.g. "Sprint 42", "2025-W20", "May Iteration" — use the exact value you'd search for in GitHub)*
 
-**4. What is the name of the sprint just before the current one?** *(for the retro prompt)*
+**4. What is the name of the sprint just before the current one?** *(for the retro prompt — only needed for label-based sprint tracking; milestone teams can leave this blank)*
 
 **5. Sprint duration**
 How many calendar days does a typical sprint last? *(e.g. 14)*
@@ -71,9 +99,10 @@ Once the user has answered, echo back a brief summary of the configuration and a
 | Setting | Value |
 |---------|-------|
 | Repository | {owner/repo} |
+| Issue access method | {access_method_label} |
 | Sprint tracking method | {description} |
 | Current sprint | {name} |
-| Previous sprint | {name} |
+| Previous sprint | {name or — (only needed for label tracking)} |
 | Sprint duration | {n} days |
 | At-risk threshold | {n} days |
 | High-discussion threshold | {n} comments |
@@ -91,9 +120,19 @@ Create the directory `.github/prompts/` if it does not exist.
 
 For each of the five prompts below, create a new file in `.github/prompts/` using the exact content specified. Replace every `{placeholder}` with the confirmed configuration values.
 
-Substitute the sprint-tracking method description from the user's answer into the relevant filter instructions: if they use Milestones, use `milestone:"{sprint_name}"` as the filter; if they use a GitHub Projects v2 Iteration field, use GraphQL to query the Projects API; if they use labels, use `label:{label_value}`; if they use a custom field, note that Case (d) applies and no filter can be pre-configured. Embed the resolved filter strategy directly into the prompt text instead of a generic description.
+Substitute the sprint-tracking method description from the user's answer into the relevant filter instructions:
+- **Milestone:** use `milestone:"{sprint_name}"` as the filter.
+- **Label:** use `label:{label_value}` as the filter.
+- **GitHub Projects v2 (any field type):** No filter can be pre-configured. For Sprint Analysis, embed: *"fetch all open repository issues — ask for sprint start date at runtime"*. For Retro Input, embed: *"fetch all issues closed in the sprint date window — ask for start and end date at runtime"*. For Burndown, Case (c) applies automatically.
+- **Throughput Forecast and Stakeholder Update** always use `milestone:"{sprint_name}"` regardless of sprint tracking method — these two prompts are milestone-scoped, not sprint-scoped.
 
-For the **burndown prompt** specifically: the generated prompt already contains all four cases (a–d) with the correct "Before You Begin" questions. Do not add a separate date-ask section — the prompt handles all tracking methods including the fallback automatically.
+For the **burndown prompt** specifically: the generated prompt already contains all three cases (a–c) with the correct "Before You Begin" questions. Do not add a separate date-ask section — the prompt handles all tracking methods including the fallback automatically.
+
+**Access method substitution:** In each prompt's Step 1, replace `{access_method_instructions}` with the appropriate instruction based on `access_method` from Step 0:
+
+- **`copilot-extension`:** Instruct the prompt to use the built-in VS Code GitHub extension tools (e.g. `github-pull-request_doSearch`) to fetch issues. Explicitly state: do not use scripts or CLI commands.
+- **`gh-cli`:** Instruct the prompt to use GitHub CLI: `gh issue list --repo {owner/repo} --state open {filter_flags} --json number,title,url,assignees,labels,createdAt,closedAt,comments --limit 200`. Map the sprint filter to the appropriate flag (`--milestone "{sprint_name}"` for milestones, `--label {label_value}` for labels). For Projects v2, no filter flag is available — fetch all open issues.
+- **`manual`:** Instruct the prompt to ask the user to paste their issue list (from the GitHub web interface, a CSV export, or `gh issue list` output) and analyse the provided data. Include this message in the prompt: *"Automatic data loading is not available. Paste your issue list below."*
 
 ---
 
@@ -113,6 +152,8 @@ agent: agent
 You are helping a software team analyse their current sprint using data from GitHub Issues and Projects.
 
 ## Step 1 — Load sprint data
+
+**Data access:** {access_method_instructions}
 
 Fetch all **open issues** for sprint **{current_sprint}** in repository `{owner/repo}`.
 Filter: {resolved_filter_strategy}
@@ -230,6 +271,8 @@ You are helping a software team prepare input for a sprint retrospective using d
 
 ## Step 1 — Load last sprint data
 
+**Data access:** {access_method_instructions}
+
 Fetch all issues for sprint **{previous_sprint}** in repository `{owner/repo}`.
 Filter: {resolved_filter_strategy_for_previous_sprint}
 
@@ -336,6 +379,8 @@ You are helping a software team produce a rough delivery forecast using GitHub I
 
 ## Step 1 — Load throughput data
 
+**Data access:** {access_method_instructions}
+
 Fetch all issues in repository `{owner/repo}` that were **closed** in the last {lookback_weeks} weeks. Group by ISO week and count closed issues per week.
 
 | Week | Issues Closed |
@@ -349,7 +394,10 @@ Compute: minimum, 25th percentile (pessimistic), median (realistic), 75th percen
 
 ## Step 3 — Count remaining work
 
-Count all **open issues** in scope: **{current_sprint}** using filter: {resolved_filter_strategy}
+Fetch all **open issues** filtered by `milestone:"{current_sprint}"`.
+If no milestone with that name exists, ask: *"How many open issues are currently in scope? (Enter a number.)"*
+
+Remaining issues: **{count}**
 
 ## Step 4 — Calculate scenarios
 
@@ -428,7 +476,7 @@ agent: agent
 >
 > **Limitation:** Based on close dates only — not on within-sprint status transitions.
 >
-> **Fallback mode (option d):** When sprint tracking uses custom fields that are not queryable via the standard GitHub API, the burndown is approximated using all issues closed in the repository since sprint start. This may include issues closed outside the sprint scope. A clean team process minimises this error.
+> **Fallback mode (option c):** When sprint tracking uses GitHub Projects v2 (any field type), the burndown is approximated using all issues closed in the repository since sprint start. This may include issues closed outside the sprint scope. A clean team process minimises this error.
 
 ## Before You Begin
 
@@ -438,13 +486,12 @@ Before fetching any data, ask the user:
 
 1. **Which option matches your sprint tracking setup?**
    - **(a) Milestone** — dates derived automatically
-   - **(b) Label** — please provide sprint start and end date (YYYY-MM-DD)
-   - **(c) GitHub Projects v2 Iteration field** — dates read via GraphQL; provide dates as fallback if GraphQL fails
-   - **(d) Projects v2 custom field or other** — please provide start date, end date, and total number of issues in this sprint
+   - **(b) Label** — please provide sprint start date (YYYY-MM-DD); end date is calculated from sprint duration ({sprint_duration_days} days)
+   - **(c) GitHub Projects v2 or other** — please provide sprint start date (YYYY-MM-DD) and total number of issues in this sprint; end date is calculated from sprint duration ({sprint_duration_days} days)
 
-2. For options (b), (c), (d): **Sprint start date and end date** (YYYY-MM-DD)
+2. For options (b) and (c): **Sprint start date** (YYYY-MM-DD)
 
-3. For option (d) only: **Total number of issues in this sprint** (readable in the GitHub Projects sprint view)
+3. For option (c) only: **Total number of issues in this sprint** (readable in the GitHub Projects sprint view)
 
 Wait for the answers before proceeding.
 
@@ -453,6 +500,8 @@ Wait for the answers before proceeding.
 You are helping a software team visualise sprint progress as a burndown chart.
 
 ## Step 1 — Load sprint data and derive date range
+
+**Data access:** {access_method_instructions}
 
 Follow the case that matches the user's tracking method:
 
@@ -463,21 +512,16 @@ Follow the case that matches the user's tracking method:
 4. Fetch all issues (open and closed) filtered by `milestone:"{current_sprint}"` using the REST API. Apply the filter server-side — do not load all repository issues and filter afterwards.
 
 **Case (b) — Label:**
-1. Use the dates provided by the user as `SPRINT_START_DATE` and `SPRINT_END_DATE`.
+1. Use the start date provided by the user as `SPRINT_START_DATE`. Compute `SPRINT_END_DATE` = `SPRINT_START_DATE` + {sprint_duration_days} − 1 days.
 2. Fetch all issues (open and closed) filtered by `label:{resolved_filter_strategy}` using the REST API. Apply the filter server-side.
 
-**Case (c) — GitHub Projects v2 Iteration field:**
-1. Look up the iteration matching **{current_sprint}** via the GraphQL Projects API. Use its `startDate` as `SPRINT_START_DATE` and `endDate` as `SPRINT_END_DATE`.
-2. Fetch all issues belonging to this iteration via GraphQL.
-3. If the GraphQL call fails or returns no results, fall back to **Case (d)**: inform the user, ask for start date, end date, and total issue count, then continue as described there.
-
-**Case (d) — Projects v2 custom field, or fallback when the Projects API is unavailable:**
-1. Use the dates provided by the user as `SPRINT_START_DATE` and `SPRINT_END_DATE`.
+**Case (c) — GitHub Projects v2 or other:**
+1. Use the start date provided by the user as `SPRINT_START_DATE`. Compute `SPRINT_END_DATE` = `SPRINT_START_DATE` + {sprint_duration_days} − 1 days.
 2. Use the total issue count provided by the user as `TOTAL_ISSUES_AT_SPRINT_START`.
 3. Fetch all issues in the repository that were closed on or after `SPRINT_START_DATE` using `GET /repos/{owner/repo}/issues?state=closed&since=SPRINT_START_DATE`. This is the best available approximation — it may include issues closed outside the sprint scope.
 4. Derive open count as: `TOTAL_ISSUES_AT_SPRINT_START` minus number of fetched closed issues. Clamp to a minimum of 0.
 
-**For Cases (a), (b), (c):**
+**For Cases (a) and (b):**
 The total count of fetched issues is `TOTAL_ISSUES_AT_SPRINT_START`. For each **closed** issue, record the `closedAt` date (date portion only, strip the time component). Note how many issues are still **open** as of today.
 
 ## Step 2 — Build daily series
@@ -568,8 +612,10 @@ You are helping a software team produce a concise, management-ready sprint statu
 
 ## Step 1 — Load data
 
-Fetch the milestone/sprint **{current_sprint}** in `{owner/repo}`.
-Filter: {resolved_filter_strategy}
+**Data access:** {access_method_instructions}
+
+Fetch the milestone **{current_sprint}** in `{owner/repo}` using `milestone:"{current_sprint}"`.
+If no milestone with that name exists, list available open milestones and ask the user to confirm which one to use.
 
 Collect: milestone due date, all open issues (number, title, URL, assignees, labels, `createdAt`, comments), all closed issues (same + `closedAt`).
 
