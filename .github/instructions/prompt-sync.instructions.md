@@ -35,4 +35,4 @@ Prüfe, ob die Änderung eine Logik betrifft, die auch im Original-Prompt `promp
 
 ## Was NICHT synchronisiert werden muss
 
-Templates in `setup.agent.md` verwenden `{placeholders}` wie `{owner/repo}`, `{current_sprint}`, `{resolved_filter_strategy}`. Die Original-Prompts formulieren dieselbe Logik generisch. Die Placeholder-Syntax selbst muss nicht identisch sein.
+Templates in `setup.agent.md` verwenden `{placeholders}` wie `{owner/repo}`, `{label_value}`, `{sprint_scope_selection_instructions}`. Die Original-Prompts formulieren dieselbe Logik generisch. Die Placeholder-Syntax selbst muss nicht identisch sein.

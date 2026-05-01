@@ -50,8 +50,8 @@ You are helping a software team visualise sprint progress as a burndown chart.
 
 **Data access — how to load issues:** Work through the following in order and use the first that succeeds. Do not attempt Python scripts, raw API calls, or other workarounds.
 
-1. **VS Code GitHub extension tools** (preferred) — if the `github-pull-request_doSearch` tool is available, use it to fetch issues.
-2. **GitHub CLI** — run `gh --version`. If exit code is 0, use `gh issue list --repo <owner/repo> --state all --json number,title,url,state,createdAt,closedAt --limit 200` with the appropriate filter flags for the tracking method.
+1. **VS Code GitHub extension tools** (preferred) — if the `github-pull-request_doSearch` tool is available, use it to fetch issues. Set `perPage: 100` and paginate through all pages (call again with `page: 2`, `page: 3`, etc.) until a page returns fewer items than `perPage`. Collect all pages before proceeding.
+2. **GitHub CLI** — run `gh --version`. If exit code is 0, use `gh issue list --repo <owner/repo> --state all --json number,title,url,state,createdAt,closedAt --limit 500` with the appropriate filter flags for the tracking method.
 3. **Neither available** — stop and tell the user: *"I can't load GitHub Issues automatically. Install the [GitHub Pull Request & Issues extension](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) or the [GitHub CLI](https://cli.github.com), then re-run this prompt — or paste your issue list here and I'll analyse it directly."*
 
 Apply the access method above to fetch issues in the appropriate case (a)–(c) below.

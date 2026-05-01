@@ -63,10 +63,11 @@ Describe your setup in your own words. Examples of what teams typically use:
 - *A combination* (e.g. milestone for the deadline + iteration field for the board view)
 - *Something else entirely* — just describe it, the more detail the better
 
-**3. What is the exact name of your current sprint?**
-*(e.g. "Sprint 42", "2025-W20", "May Iteration" — use the exact value you'd search for in GitHub)*
+**3. Sprint name (for label-based tracking only)**
+*(If your team uses labels like `sprint-42`, enter the current sprint label value here — e.g. `sprint-42`. If you use Milestones or GitHub Projects v2, leave blank — sprint names are resolved at runtime from the API.)*
 
-**4. What is the name of the sprint just before the current one?** *(for the retro prompt — only needed for label-based sprint tracking; milestone teams can leave this blank)*
+**4. Previous sprint label (for label-based tracking only)**
+*(Only needed for the retro prompt. If you use labels, enter the label value for the sprint just before the current one — e.g. `sprint-41`. Leave blank otherwise.)*
 
 **5. Sprint duration**
 How many calendar days does a typical sprint last? *(e.g. 14)*
@@ -101,8 +102,8 @@ Once the user has answered, echo back a brief summary of the configuration and a
 | Repository | {owner/repo} |
 | Issue access method | {access_method_label} |
 | Sprint tracking method | {description} |
-| Current sprint | {name} |
-| Previous sprint | {name or — (only needed for label tracking)} |
+| Current sprint label | {label value or — (only needed for label tracking)} |
+| Previous sprint label | {label value or — (only needed for label tracking)} |
 | Sprint duration | {n} days |
 | At-risk threshold | {n} days |
 | High-discussion threshold | {n} comments |
@@ -128,9 +129,27 @@ Substitute the sprint-tracking method description from the user's answer into th
 
 For the **burndown prompt** specifically: the generated prompt already contains all three cases (a–c) with the correct "Before You Begin" questions. Do not add a separate date-ask section — the prompt handles all tracking methods including the fallback automatically.
 
+**Sprint scope selection substitution:** Replace the three sprint-selection placeholders based on the sprint tracking method:
+
+Replace `{sprint_scope_selection_instructions}` (Sprint Analysis — current sprint) with:
+- **Milestone:** `Fetch all open milestones in \`{owner/repo}\` and list them numbered by due date (earliest first). Ask: "Which sprint milestone should I analyse? (Enter number, default: 1)". Store title as ACTIVE_SPRINT_NAME. ACTIVE_SPRINT_FILTER = milestone:"ACTIVE_SPRINT_NAME".`
+- **Label:** `Ask: "Sprint label? (default: {label_value})". Use the entered value (or default) as ACTIVE_SPRINT_NAME for headings. ACTIVE_SPRINT_FILTER = label:ACTIVE_SPRINT_NAME.`
+- **Projects v2:** `Ask: "Sprint start date? (YYYY-MM-DD)". ACTIVE_SPRINT_FILTER = all open issues. ACTIVE_SPRINT_NAME is not required (use the start date in headings).`
+
+Replace `{retro_sprint_scope_selection_instructions}` (Retro Input — last completed sprint) with:
+- **Milestone:** `Fetch all closed milestones in \`{owner/repo}\`, sorted by closed date descending. Use the most recently closed one automatically — no user input needed. Store title as RETRO_SPRINT_NAME. RETRO_SPRINT_FILTER = milestone:"RETRO_SPRINT_NAME".`
+- **Label:** `Ask: "Sprint label for the previous sprint? (default: {previous_label_value})". Use the entered value (or default) as RETRO_SPRINT_NAME. RETRO_SPRINT_FILTER = label:RETRO_SPRINT_NAME.`
+- **Projects v2:** `Ask: "Sprint start date? (YYYY-MM-DD)" and "Sprint end date? (YYYY-MM-DD)". RETRO_SPRINT_FILTER = issues closed between those dates (closedAt >= start AND closedAt <= end). RETRO_SPRINT_NAME = not required (use date range in headings).`
+
+Replace `{burndown_sprint_scope_selection_instructions}` (Burndown Chart — sprint selection) with:
+- **Milestone:** `Ask: "Which option matches your tracking? (a) GitHub Milestone, (b) Label, (c) GitHub Projects v2 or other". For (a): list open milestones numbered, user picks (default: 1). Store title as ACTIVE_SPRINT_NAME. Case (a) flow applies.`
+- **Label:** Same question. For (b): ask "Sprint label? (default: {label_value})". Store as ACTIVE_SPRINT_NAME. Case (b) flow applies.
+- **Projects v2:** Same question. For (c): no name needed. Case (c) flow applies.
+- *(Note: embed the full three-option question regardless of tracking method — the prompt handles all cases)*
+
 **Access method substitution:** In each prompt's Step 1, replace `{access_method_instructions}` with the appropriate instruction based on `access_method` from Step 0:
 
-- **`copilot-extension`:** Instruct the prompt to use the built-in VS Code GitHub extension tools (e.g. `github-pull-request_doSearch`) to fetch issues. Explicitly state: do not use scripts or CLI commands.
+- **`copilot-extension`:** Instruct the prompt to use the built-in VS Code GitHub extension tools (e.g. `github-pull-request_doSearch`) to fetch issues. Set `perPage: 100` and paginate through all pages (call again with `page: 2`, `page: 3`, etc.) until a page returns fewer items than `perPage`. Collect all pages before proceeding. Explicitly state: do not use scripts or CLI commands.
 - **`gh-cli`:** Instruct the prompt to use GitHub CLI: `gh issue list --repo {owner/repo} --state open {filter_flags} --json number,title,url,assignees,labels,createdAt,closedAt,comments --limit 200`. Map the sprint filter to the appropriate flag (`--milestone "{sprint_name}"` for milestones, `--label {label_value}` for labels). For Projects v2, no filter flag is available — fetch all open issues.
 - **`manual`:** Instruct the prompt to ask the user to paste their issue list (from the GitHub web interface, a CSV export, or `gh issue list` output) and analyse the provided data. Include this message in the prompt: *"Automatic data loading is not available. Paste your issue list below."*
 
@@ -146,17 +165,25 @@ agent: agent
 ---
 
 > **Configuration** — generated by `setup.agent.md`
-> Repository: `{owner/repo}` · Sprint: **{current_sprint}** · At-risk after: **{at_risk_days} days**
+> Repository: `{owner/repo}` · At-risk after: **{at_risk_days} days**
 > Sprint tracking: {sprint_tracking_method_summary}
 
 You are helping a software team analyse their current sprint using data from GitHub Issues and Projects.
+
+## Before You Begin
+
+Before fetching any data, identify the sprint scope:
+
+{sprint_scope_selection_instructions}
+
+Store the result as `ACTIVE_SPRINT_NAME` (for headings) and `ACTIVE_SPRINT_FILTER` (for API calls).
 
 ## Step 1 — Load sprint data
 
 **Data access:** {access_method_instructions}
 
-Fetch all **open issues** for sprint **{current_sprint}** in repository `{owner/repo}`.
-Filter: {resolved_filter_strategy}
+Fetch all **open issues** in repository `{owner/repo}`.
+Filter: `ACTIVE_SPRINT_FILTER`
 
 For each issue collect:
 - Issue number, title, URL
@@ -181,7 +208,7 @@ An issue can be At Risk, a Blocker, or an Ownership Gap simultaneously.
 
 ---
 
-### 🏃 Sprint: {current_sprint} — Analysis as of {today}
+### 🏃 Sprint: `ACTIVE_SPRINT_NAME` — Analysis as of {today}
 
 #### 🚫 Blockers ({count})
 
@@ -258,23 +285,31 @@ If no action needed: *The sprint looks healthy — no immediate actions required
 ````markdown
 ---
 name: Retro Input — {team_name_or_repo}
-description: Generate retrospective input for the sprint before {current_sprint} for {team_name_or_repo}. Pre-configured — no setup needed.
+description: Generate retrospective input for the last completed sprint for {team_name_or_repo}. Pre-configured — no setup needed.
 agent: agent
 ---
 
 > **Configuration** — generated by `setup.agent.md`
-> Repository: `{owner/repo}` · Sprint to retrospect: **{previous_sprint}**
+> Repository: `{owner/repo}`
 > High-discussion threshold: **{high_discussion_threshold} comments**
 > Sprint tracking: {sprint_tracking_method_summary}
 
 You are helping a software team prepare input for a sprint retrospective using data from GitHub Issues.
 
+## Before You Begin
+
+Before fetching any data, identify the sprint to retrospect:
+
+{retro_sprint_scope_selection_instructions}
+
+Store the result as `RETRO_SPRINT_NAME` (for headings) and `RETRO_SPRINT_FILTER` (for API calls).
+
 ## Step 1 — Load last sprint data
 
 **Data access:** {access_method_instructions}
 
-Fetch all issues for sprint **{previous_sprint}** in repository `{owner/repo}`.
-Filter: {resolved_filter_strategy_for_previous_sprint}
+Fetch all issues in repository `{owner/repo}`.
+Filter: `RETRO_SPRINT_FILTER`
 
 Separate into: **Closed issues** and **remaining open issues**.
 
@@ -295,7 +330,7 @@ Compute:
 
 ---
 
-### 🔄 Retrospective Input — {previous_sprint}
+### 🔄 Retrospective Input — `RETRO_SPRINT_NAME`
 
 Sprint closed issues: **{count}** | Open / not resolved: **{count}**
 
@@ -349,7 +384,7 @@ If all signals positive: *Good sprint — focus the retro on what to keep doing.
 
 ---
 
-> **Note:** Trend analysis across multiple sprints requires historical status-change data GitHub Copilot cannot access. For automated trend analysis, visit [flow2c.com](https://flow2c.com).
+> **Note:** Trend analysis across multiple sprints and Time-in-State breakdowns require historical status-change data that GitHub Copilot cannot access. For automated trend analysis across sprints, visit [flow2c.com](https://flow2c.com).
 ````
 
 ---
@@ -359,19 +394,19 @@ If all signals positive: *Good sprint — focus the retro on what to keep doing.
 ````markdown
 ---
 name: Throughput Forecast — {team_name_or_repo}
-description: Throughput-based delivery forecast for {current_sprint} in {team_name_or_repo}. Pre-configured — no setup needed.
+description: Throughput-based delivery forecast for {team_name_or_repo}. Pre-configured — no setup needed.
 agent: agent
 ---
 
 > **Configuration** — generated by `setup.agent.md`
-> Repository: `{owner/repo}` · Forecast scope: **{current_sprint}**
+> Repository: `{owner/repo}`
 > Throughput lookback: **{lookback_weeks} weeks**
 
 > **Important — what this forecast can and cannot do:**
 >
 > This is a simplified forecast based on **throughput** (issues closed per week over the last {lookback_weeks} weeks). It assumes roughly equal issue size and constant team capacity. It does **not** account for item size, complexity distribution, cycle time variability, or team capacity changes.
 >
-> For a statistically rigorous Monte Carlo simulation, visit [flow2c.com](https://flow2c.com).
+> For a statistically rigorous Monte Carlo simulation that uses real cycle time distributions and models variability properly, visit [flow2c.com](https://flow2c.com).
 
 ---
 
@@ -392,10 +427,22 @@ Fetch all issues in repository `{owner/repo}` that were **closed** in the last {
 
 Compute: minimum, 25th percentile (pessimistic), median (realistic), 75th percentile (optimistic), maximum.
 
-## Step 3 — Count remaining work
+## Step 3 — Select milestone and count remaining work
 
-Fetch all **open issues** filtered by `milestone:"{current_sprint}"`.
-If no milestone with that name exists, ask: *"How many open issues are currently in scope? (Enter a number.)"*
+Fetch all open milestones in `{owner/repo}` and present them as a numbered list:
+
+```
+Open milestones:
+  1. <title> (due <due_on date or "no due date">)
+  2. ...
+Which milestone should I forecast? (Enter number, default: 1 — the one with the earliest due date)
+```
+
+Wait for the user's answer. Store the selected milestone title as `FORECAST_MILESTONE`.
+
+If no milestones exist, ask: *"No open milestones found. How many open issues are currently in scope? (Enter a number.)"* and use that count directly.
+
+Fetch all **open issues** filtered by `milestone:"FORECAST_MILESTONE"` and count them.
 
 Remaining issues: **{count}**
 
@@ -409,7 +456,7 @@ If throughput is 0: *Cannot forecast — no issues closed in the lookback period
 
 ## Step 5 — Present results
 
-### 📅 Forecast: {current_sprint}
+### 📅 Forecast: `FORECAST_MILESTONE`
 
 | Scenario | Throughput Used | Weeks Needed | Estimated Completion |
 |----------|----------------|--------------|---------------------|
@@ -426,7 +473,7 @@ Render the diagram by calling the renderMermaidDiagram tool with the Mermaid mar
 Example markup to pass (with placeholders filled in):
 
 gantt
-    title Delivery Forecast — {current_sprint}
+    title Delivery Forecast — `FORECAST_MILESTONE`
     dateFormat  YYYY-MM-DD
     axisFormat  %b %d
 
@@ -454,6 +501,10 @@ Up to **3** significant facts with numbers.
 
 Up to **3** actionable recommendations. Each starts with a verb.
 If comfortable: *Forecast looks manageable — share the realistic scenario with stakeholders.*
+
+---
+
+> **Note:** This forecast is based on throughput only and does not account for cycle time distributions or team capacity changes. For a statistically rigorous Monte Carlo simulation, visit [flow2c.com](https://flow2c.com).
 ````
 
 ---
@@ -463,12 +514,12 @@ If comfortable: *Forecast looks manageable — share the realistic scenario with
 ````markdown
 ---
 name: Burndown Chart — {team_name_or_repo}
-description: Mermaid burndown chart for {current_sprint} in {team_name_or_repo}. Pre-configured — no setup needed.
+description: Mermaid burndown chart for {team_name_or_repo}. Pre-configured — no setup needed.
 agent: agent
 ---
 
 > **Configuration** — generated by `setup.agent.md`
-> Repository: `{owner/repo}` · Sprint: **{current_sprint}**
+> Repository: `{owner/repo}`
 > Typical sprint duration: **{sprint_duration_days} days**
 > Sprint tracking: {sprint_tracking_method_summary}
 
@@ -480,20 +531,21 @@ agent: agent
 
 ## Before You Begin
 
-Before fetching any data, ask the user:
+Before fetching any data, identify the sprint:
 
-**Sprint {current_sprint} — a few quick questions before I start:**
+{burndown_sprint_scope_selection_instructions}
 
-1. **Which option matches your sprint tracking setup?**
-   - **(a) Milestone** — dates derived automatically
-   - **(b) Label** — please provide sprint start date (YYYY-MM-DD); end date is calculated from sprint duration ({sprint_duration_days} days)
-   - **(c) GitHub Projects v2 or other** — please provide sprint start date (YYYY-MM-DD) and total number of issues in this sprint; end date is calculated from sprint duration ({sprint_duration_days} days)
+Store the result as `ACTIVE_SPRINT_NAME` (for headings) and `ACTIVE_SPRINT_FILTER` or date range as appropriate for the case below.
 
-2. For options (b) and (c): **Sprint start date** (YYYY-MM-DD)
+Then ask any remaining questions for the selected case:
 
-3. For option (c) only: **Total number of issues in this sprint** (readable in the GitHub Projects sprint view)
+**If Case (a) — Milestone:** No further questions needed — dates are derived from the milestone.
 
-Wait for the answers before proceeding.
+**If Case (b) — Label:** Ask: *"Sprint start date? (YYYY-MM-DD) — end date will be calculated as start + {sprint_duration_days} days."*
+
+**If Case (c) — Projects v2:** Ask: *"Sprint start date? (YYYY-MM-DD)"* and *"Total number of issues in this sprint?"* — end date will be calculated as start + {sprint_duration_days} days. No sprint name is needed.
+
+Wait for answers before proceeding.
 
 ---
 
@@ -506,14 +558,15 @@ You are helping a software team visualise sprint progress as a burndown chart.
 Follow the case that matches the user's tracking method:
 
 **Case (a) — GitHub Milestone:**
-1. Fetch the milestone matching **{current_sprint}**. Use its `due_on` date as `SPRINT_END_DATE`.
+1. `ACTIVE_SPRINT_NAME` and filter are already set from the scope selection step.
+2. Fetch the milestone matching `ACTIVE_SPRINT_NAME`. Use its `due_on` date as `SPRINT_END_DATE`.
 2. Fetch all closed milestones sorted by `due_on` descending. Find the most recently closed milestone whose `due_on` is before the current milestone's `due_on` — use that as `SPRINT_START_DATE`.
 3. If no prior milestone exists or `due_on` is null, ask the user for the missing date(s) before continuing.
-4. Fetch all issues (open and closed) filtered by `milestone:"{current_sprint}"` using the REST API. Apply the filter server-side — do not load all repository issues and filter afterwards.
+4. Fetch all issues (open and closed) filtered by `milestone:"ACTIVE_SPRINT_NAME"` using the REST API. Apply the filter server-side — do not load all repository issues and filter afterwards.
 
 **Case (b) — Label:**
 1. Use the start date provided by the user as `SPRINT_START_DATE`. Compute `SPRINT_END_DATE` = `SPRINT_START_DATE` + {sprint_duration_days} − 1 days.
-2. Fetch all issues (open and closed) filtered by `label:{resolved_filter_strategy}` using the REST API. Apply the filter server-side.
+2. Fetch all issues (open and closed) filtered by `label:{label_value}` using the REST API. Apply the filter server-side.
 
 **Case (c) — GitHub Projects v2 or other:**
 1. Use the start date provided by the user as `SPRINT_START_DATE`. Compute `SPRINT_END_DATE` = `SPRINT_START_DATE` + {sprint_duration_days} − 1 days.
@@ -555,7 +608,7 @@ Rules for renderer stability:
 Example markup to pass (with placeholders filled in):
 
 xychart-beta
-    title "Burndown {current_sprint}"
+    title "Burndown `ACTIVE_SPRINT_NAME`"
     x-axis [04-13, 04-14, 04-15, 04-16]
     y-axis "Remaining Issues" 0 --> {total_at_start}
     line "Ideal"  [19, 17, 15, 13]
@@ -589,7 +642,7 @@ If healthy: *Sprint is on track — continue as planned.*
 
 ---
 
-> **Note:** Burndown is based on close dates only. For in-progress state tracking, visit [flow2c.com](https://flow2c.com).
+> **Note:** The burndown is based on issue close dates only, not on status transitions within the sprint. For a full flow chart with in-progress state tracking, visit [flow2c.com](https://flow2c.com).
 ````
 
 ---
@@ -599,23 +652,37 @@ If healthy: *Sprint is on track — continue as planned.*
 ````markdown
 ---
 name: Stakeholder Update — {team_name_or_repo}
-description: Management-ready sprint update for {current_sprint} in {team_name_or_repo}. Pre-configured — no setup needed.
+description: Management-ready sprint update for {team_name_or_repo}. Pre-configured — no setup needed.
 agent: agent
 ---
 
 > **Configuration** — generated by `setup.agent.md`
-> Repository: `{owner/repo}` · Sprint: **{current_sprint}**
+> Repository: `{owner/repo}`
 > Deadline risk window: **{deadline_risk_days} days** · Highlight threshold: **{high_discussion_threshold} comments**
 > Sprint tracking: {sprint_tracking_method_summary}
 
 You are helping a software team produce a concise, management-ready sprint status update.
 
+## Before You Begin
+
+Fetch all open milestones in `{owner/repo}` and present them as a numbered list:
+
+```
+Open milestones:
+  1. <title> (due <due_on date or "no due date">)
+  2. ...
+Which milestone should this update cover? (Enter number, default: 1 — the one with the earliest due date)
+```
+
+Wait for the user's answer. Store the selected milestone title as `ACTIVE_MILESTONE`.
+
+If no milestones exist, ask: *"No open milestones found. Please provide a milestone name or describe the scope."*
+
 ## Step 1 — Load data
 
 **Data access:** {access_method_instructions}
 
-Fetch the milestone **{current_sprint}** in `{owner/repo}` using `milestone:"{current_sprint}"`.
-If no milestone with that name exists, list available open milestones and ask the user to confirm which one to use.
+Fetch the milestone `ACTIVE_MILESTONE` in `{owner/repo}` using `milestone:"ACTIVE_MILESTONE"`.
 
 Collect: milestone due date, all open issues (number, title, URL, assignees, labels, `createdAt`, comments), all closed issues (same + `closedAt`).
 
@@ -640,7 +707,7 @@ Flag open issues if:
 
 ---
 
-## 📊 Sprint Update: {current_sprint}{team_name_suffix}
+## 📊 Sprint Update: `ACTIVE_MILESTONE`{team_name_suffix}
 
 **Date:** {today} · **Progress:** {closed}/{total} issues ({completion_rate}%) · **Days remaining:** {days}
 
@@ -689,7 +756,7 @@ If no action needed: *Sprint is progressing well — no immediate stakeholder ac
 
 ---
 
-> **Note:** Probability-based forecasts require historical flow data GitHub Copilot cannot access. For automated risk scoring, visit [flow2c.com](https://flow2c.com).
+> **Note:** Probability-based completion forecasts and risk scores derived from historical flow patterns require historical flow data that GitHub Copilot cannot access. For automated risk scoring and forecasting, visit [flow2c.com](https://flow2c.com).
 ````
 
 ---
