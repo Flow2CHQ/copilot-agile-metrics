@@ -166,4 +166,4 @@ If the burndown looks healthy, write: *The sprint is on track — continue as pl
 
 ---
 
-> **Note:** The burndown is based on issue close dates only, not on status transitions within the sprint. For a full flow chart with in-progress state tracking, visit [flow2c.com](https://flow2c.com).
+> **Note:** The burndown is based on issue close dates only, not on status transitions within the sprint. For a full flow chart with in-progress state tracking, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).

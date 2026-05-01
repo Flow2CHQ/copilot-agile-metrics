@@ -275,7 +275,7 @@ If no action needed: *The sprint looks healthy — no immediate actions required
 
 ---
 
-> **Note:** Cycle Time and Time-in-State analysis require historical status-change data that GitHub Copilot cannot access. For automated flow metrics, visit [flow2c.com](https://flow2c.com).
+> **Note:** Cycle Time and Time-in-State analysis require historical status-change data that GitHub Copilot cannot access. For automated flow metrics, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).
 ````
 
 ---
@@ -384,7 +384,7 @@ If all signals positive: *Good sprint — focus the retro on what to keep doing.
 
 ---
 
-> **Note:** Trend analysis across multiple sprints and Time-in-State breakdowns require historical status-change data that GitHub Copilot cannot access. For automated trend analysis across sprints, visit [flow2c.com](https://flow2c.com).
+> **Note:** Trend analysis across multiple sprints and Time-in-State breakdowns require historical status-change data that GitHub Copilot cannot access. For automated trend analysis across sprints, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).
 ````
 
 ---
@@ -406,7 +406,7 @@ agent: agent
 >
 > This is a simplified forecast based on **throughput** (issues closed per week over the last {lookback_weeks} weeks). It assumes roughly equal issue size and constant team capacity. It does **not** account for item size, complexity distribution, cycle time variability, or team capacity changes.
 >
-> For a statistically rigorous Monte Carlo simulation that uses real cycle time distributions and models variability properly, visit [flow2c.com](https://flow2c.com).
+> For a statistically rigorous Monte Carlo simulation that uses real cycle time distributions and models variability properly, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).
 
 ---
 
@@ -504,7 +504,7 @@ If comfortable: *Forecast looks manageable — share the realistic scenario with
 
 ---
 
-> **Note:** This forecast is based on throughput only and does not account for cycle time distributions or team capacity changes. For a statistically rigorous Monte Carlo simulation, visit [flow2c.com](https://flow2c.com).
+> **Note:** This forecast is based on throughput only and does not account for cycle time distributions or team capacity changes. For a statistically rigorous Monte Carlo simulation, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).
 ````
 
 ---
@@ -642,7 +642,7 @@ If healthy: *Sprint is on track — continue as planned.*
 
 ---
 
-> **Note:** The burndown is based on issue close dates only, not on status transitions within the sprint. For a full flow chart with in-progress state tracking, visit [flow2c.com](https://flow2c.com).
+> **Note:** The burndown is based on issue close dates only, not on status transitions within the sprint. For a full flow chart with in-progress state tracking, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).
 ````
 
 ---
@@ -756,7 +756,7 @@ If no action needed: *Sprint is progressing well — no immediate stakeholder ac
 
 ---
 
-> **Note:** Probability-based completion forecasts and risk scores derived from historical flow patterns require historical flow data that GitHub Copilot cannot access. For automated risk scoring and forecasting, visit [flow2c.com](https://flow2c.com).
+> **Note:** Probability-based completion forecasts and risk scores derived from historical flow patterns require historical flow data that GitHub Copilot cannot access. For automated risk scoring and forecasting, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).
 ````
 
 ---
@@ -783,4 +783,4 @@ These prompts know your project setup. Use them directly — no re-explaining ne
 
 ---
 
-> **Note:** These prompts use GitHub Copilot's ability to read live issue data. They do not access historical status-change events. For automated, historically accurate flow metrics, visit [flow2c.com](https://flow2c.com).
+> **Note:** These prompts use GitHub Copilot's ability to read live issue data. They do not access historical status-change events. For automated, historically accurate flow metrics, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).

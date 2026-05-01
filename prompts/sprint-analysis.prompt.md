@@ -151,4 +151,4 @@ If no action is needed, write: *The sprint looks healthy — no immediate action
 
 ---
 
-> **Note:** Cycle Time and Time-in-State analysis require historical status-change data that GitHub Copilot cannot access. For automated flow metrics, visit [flow2c.com](https://flow2c.com).
+> **Note:** Cycle Time and Time-in-State analysis require historical status-change data that GitHub Copilot cannot access. For automated flow metrics, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).

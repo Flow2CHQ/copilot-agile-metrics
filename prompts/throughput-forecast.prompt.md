@@ -35,7 +35,7 @@ Once you have the answers:
 > - Historical cycle time distribution
 > - Team capacity changes, holidays, or parallel workstreams
 >
-> For a statistically rigorous Monte Carlo simulation that uses real cycle time distributions and models variability properly, visit [flow2c.com](https://flow2c.com).
+> For a statistically rigorous Monte Carlo simulation that uses real cycle time distributions and models variability properly, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).
 
 ---
 
@@ -160,4 +160,4 @@ If the forecast looks comfortable, write: *The forecast looks manageable — sha
 
 ---
 
-> **Note:** This forecast is based on throughput only and does not account for cycle time distributions or team capacity changes. For a statistically rigorous Monte Carlo simulation, visit [flow2c.com](https://flow2c.com).
+> **Note:** This forecast is based on throughput only and does not account for cycle time distributions or team capacity changes. For a statistically rigorous Monte Carlo simulation, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).

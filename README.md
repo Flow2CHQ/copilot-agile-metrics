@@ -143,13 +143,13 @@ What these prompts **can** do:
 - Generate simple forecasts, burndowns, and summaries based on throughput
 - Identify structural risk signals (no assignee, blocker labels, proximity to deadline)
 
-For automatically tracked Cycle Time, Time-in-State distributions, and real Monte Carlo simulations visit **[flow2c.com](https://flow2c.com)**.
+For automatically tracked Cycle Time, Time-in-State distributions, and real Monte Carlo simulations visit **[flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics)**.
 
 ---
 
 ## Take It Further — flow2c.com
 
-These prompts surface insights from GitHub's current issue state — no extra tooling required. For automatically tracked, historically accurate flow metrics, the team behind this project builds **[flow2c.com](https://flow2c.com)**.
+These prompts surface insights from GitHub's current issue state — no extra tooling required. For automatically tracked, historically accurate flow metrics, the team behind this project builds **[flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics)**.
 
 | | Free prompts | flow2c.com |
 |---|:---:|:---:|
@@ -164,7 +164,7 @@ These prompts surface insights from GitHub's current issue state — no extra to
 | **Multi-sprint trend charts** | ❌ | ✅ |
 | **Automatic daily refresh** | ❌ | ✅ |
 
-[**→ Start for free at flow2c.com**](https://flow2c.com)
+[**→ Start for free at flow2c.com**](https://flow2c.com?utm_source=copilot-agile-metrics)
 
 ---
 
@@ -185,4 +185,4 @@ See also: [Code of Conduct](CODE_OF_CONDUCT.md) · [Security Policy](SECURITY.md
 
 ---
 
-*Built and maintained by the team behind [flow2c](https://flow2c.com) – automated flow metrics for GitHub Projects.*
+*Built and maintained by the team behind [flow2c](https://flow2c.com?utm_source=copilot-agile-metrics) – automated flow metrics for GitHub Projects.*

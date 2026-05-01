@@ -151,4 +151,4 @@ If all signals look positive, write: *Good sprint overall — focus the retro on
 
 ---
 
-> **Note:** Trend analysis across multiple sprints and Time-in-State breakdowns require historical status-change data that GitHub Copilot cannot access. For automated trend analysis across sprints, visit [flow2c.com](https://flow2c.com).
+> **Note:** Trend analysis across multiple sprints and Time-in-State breakdowns require historical status-change data that GitHub Copilot cannot access. For automated trend analysis across sprints, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).

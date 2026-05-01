@@ -142,4 +142,4 @@ If no action is needed, write: *Sprint is progressing well — no immediate acti
 
 ---
 
-> **Note:** Probability-based completion forecasts and risk scores derived from historical flow patterns require historical flow data that GitHub Copilot cannot access. For automated risk scoring and forecasting, visit [flow2c.com](https://flow2c.com).
+> **Note:** Probability-based completion forecasts and risk scores derived from historical flow patterns require historical flow data that GitHub Copilot cannot access. For automated risk scoring and forecasting, visit [flow2c.com](https://flow2c.com?utm_source=copilot-agile-metrics).
